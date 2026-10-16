@@ -1,30 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import FastImage from '@/components/ui/FastImage';
 
 export default function PoojaCard({ pooja, onBook }) {
-  // Local state for With vs Without Samagri on the card itself!
   const [withSamagri, setWithSamagri] = useState(true);
-
   const displayPrice = withSamagri ? pooja.priceWithSamagri : pooja.priceWithoutSamagri;
 
   return (
     <div className="pooja-card">
       <div className="card-img-box">
-        <Image
+        <FastImage
           src={pooja.image}
           alt={pooja.title}
-          width={220}
-          height={145}
+          width={320}
+          height={180}
           className="pooja-card-img"
         />
+        {pooja.badge && (
+          <span className="card-category-badge">{pooja.badge}</span>
+        )}
       </div>
 
       <h4 className="card-title">{pooja.title}</h4>
       <p className="card-subtitle">{pooja.subtitle}</p>
 
-      {/* WITH VS WITHOUT SAMAGRI TOGGLE PILL ON CARD */}
+      {/* WITH VS WITHOUT SAMAGRI LIVE TOGGLE */}
       <div className="card-samagri-toggle">
         <button
           type="button"
@@ -45,16 +46,16 @@ export default function PoojaCard({ pooja, onBook }) {
       </div>
 
       <div className="card-price-row">
-        <span className="price-tag">From ₹{displayPrice?.toLocaleString('en-IN')}</span>
-        <span className="price-type-sub">{withSamagri ? '(With Kit)' : '(Without Kit)'}</span>
+        <span className="price-tag">₹{displayPrice?.toLocaleString('en-IN')}</span>
+        <span className="price-type-sub">{withSamagri ? '(With Full Kit)' : '(Pandit Dakshina)'}</span>
       </div>
 
-      <button 
-        type="button" 
-        className="btn-card-book" 
+      <button
+        type="button"
+        className="btn-card-book"
         onClick={() => onBook(pooja.id, withSamagri)}
       >
-        Book Now
+        Book This Pooja →
       </button>
     </div>
   );

@@ -1,18 +1,18 @@
 export const FAQS = [
   {
+    q: 'How are Pandits verified on ShraddhaSetu?',
+    a: 'Every Pandit Ji undergoes rigorous 4-step verification: Veda Vidyapeeth / Gurukul degrees (e.g. Sampurnanand, Tirupati), oral recitation test by senior Acharyas, police verification, and a minimum of 5 years of traditional karmakand practice.'
+  },
+  {
     q: 'What is the difference between "With Samagri" and "Without Samagri"?',
-    a: 'In "With Samagri" option, our team prepares and brings a complete 100% pure Vedic kit (A2 Cow Ghee, Havan wood, Gangajal, Roli, Akshat, Flowers, Prasad bhog). In "Without Samagri", only Pandit Ji arrives for the ritual, and you arrange the items from our provided checklist.'
+    a: 'With Samagri includes a 100% pure kit delivered to your doorstep (A2 Desi cow ghee, Gangajal, Bhimseni camphor, mango samidha, and 32 herbs). Without Samagri covers Pandit Ji\'s Dakshina only, and we send you an exact checklist of items to arrange.'
   },
   {
-    q: 'How are Pandits verified by ShraddhaSetu?',
-    a: 'Every Pandit Ji undergoes strict background verification, Gurukul degree validation (Sanskrit/Karmakand), minimum 5+ years ritual experience, and gotra/lineage vetting.'
+    q: 'Can I choose the Puja Muhurat and time slot?',
+    a: 'Yes, while booking you choose your preferred date and time slot. Our Vedic coordinator verifies Gotra, Janma Nakshatra, and Panchang to confirm the most auspicious muhurat.'
   },
   {
-    q: 'Can I choose an auspicious Muhurat as per my Kundali?',
-    a: 'Yes, during booking our Astrologer/Acharya team calculates the exact Shubh Muhurat based on your birth Nakshatra, Tithi, and City sunrise times.'
-  },
-  {
-    q: 'How does Pandit Ji Login work?',
-    a: 'Verified Pandits can log in through the "Pandit Portal" tab using their registered mobile number. They can accept booking requests in their city, check dakshina payouts, and view schedule.'
+    q: 'How does a Vedic Pandit register and receive bookings?',
+    a: 'Pandits can register via the Pandit Portal by providing Gurukul credentials and specialization. Once verified, local puja booking requests in their city appear in their portal for instant acceptance.'
   }
 ];

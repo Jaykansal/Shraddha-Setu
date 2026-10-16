@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import FastImage from '@/components/ui/FastImage';
 import { SITE_CONFIG } from '@/data/siteConfig';
 
 const HERO_SLIDES = [
@@ -10,37 +10,34 @@ const HERO_SLIDES = [
     image: '/images/hero_illustration.png',
     tag: 'VARANASI GHATS & SUNRISE AARTI',
     title: 'Divine Temple Ghats & Sacred Ganga Aarti',
+    desc: 'Invite authentic Vedic blessings to your doorstep with certified Acharyas from Kashi & Haridwar.'
   },
   {
     id: 2,
     image: '/images/pooja_grah_shanti.png',
-    tag: 'DIVINE LORD GANESHA',
-    title: 'Vighnaharta Mangal Murti Blessings',
+    tag: 'DIVINE LORD GANESHA & NAVAGRAHA',
+    title: 'Vighnaharta Mangal Murti & Grah Shanti',
+    desc: 'Harmonize cosmic vibrations and dissolve domestic obstacles with classical Vedic Vidhi.'
   },
   {
     id: 3,
     image: '/images/pooja_mrityunjaya.png',
     tag: 'LORD SHIVA & SACRED KALASH',
     title: 'Maha Mrityunjaya & Sacred Bilva Abhishekam',
+    desc: 'Potent Vedic Jaap and Havan dedicated to Mahadev for radiant health, peace, and protection.'
   },
   {
     id: 4,
     image: '/images/pooja_lakshmi.png',
-    tag: 'MAHALAKSHMI & ABUNDANCE',
-    title: 'Goddess Lakshmi on Lotus & Golden Blessings',
-  },
-  {
-    id: 5,
-    image: '/images/pooja_navagraha.png',
-    tag: 'VEDIC HAVAN & AGNI',
-    title: 'Sacred Agni Flames & 100% Shuddh Havan',
+    tag: 'MAHALAKSHMI & KUBER ABUNDANCE',
+    title: 'Goddess Lakshmi Pujan & Golden Prosperity',
+    desc: 'Invoke spiritual abundance, commercial stability, and joyous fortune for home and business.'
   }
 ];
 
-export default function HeroSlider({ onOpenModal }) {
+export default function HeroSlider({ onOpenModal, onOpenPortal }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Auto-change hero image every 5 seconds (5000ms)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -48,65 +45,83 @@ export default function HeroSlider({ onOpenModal }) {
     return () => clearInterval(timer);
   }, []);
 
+  const slide = HERO_SLIDES[currentSlide];
+
   return (
     <section className="hero-container" id="home">
       <div className="hero-wrapper">
         <div className="hero-content">
           <div className="hero-tagline">
-            <span>✦</span> FAITH &nbsp;|&nbsp; TRADITION &nbsp;|&nbsp; DEVOTION <span>✦</span>
+            <span>✨</span> FAITH &nbsp;|&nbsp; VEDIC TRADITION &nbsp;|&nbsp; DEVOTION <span>✨</span>
           </div>
+
           <h1 className="hero-title">
             <span className="title-part-shraddha">Shraddha</span>
             <span className="title-part-setu">Setu</span>
           </h1>
+
           <div className="title-subline">
-            Connecting Faith with <br />
-            <span className="highlight">Divine Services</span>
+            Book Certified Gurukul Pandits for <br />
+            <span className="highlight">Sacred Pujas & Havans at Home</span>
           </div>
+
           <p className="hero-description">
-            {SITE_CONFIG.motto}
+            {SITE_CONFIG.motto} Choose between <strong>"With 100% Pure Samagri Kit"</strong> or <strong>"Pandit Only"</strong> across 500+ Indian cities.
           </p>
+
+          {/* Quick Dual Choice Highlight Pills */}
+          <div className="hero-choice-pills">
+            <div className="choice-pill-item">
+              <span className="pill-icon">📦</span>
+              <div>
+                <strong>With Pure Samagri Kit</strong>
+                <small>A2 Ghee, Camphor, Gangajal & 32 Herbs</small>
+              </div>
+            </div>
+            <div className="choice-pill-item">
+              <span className="pill-icon">🕉️</span>
+              <div>
+                <strong>Pandit Only (DIY Samagri)</strong>
+                <small>Dakshina only + Free exact checklist</small>
+              </div>
+            </div>
+          </div>
+
           <div className="hero-buttons">
-            <button 
-              type="button" 
-              className="btn-hero-primary" 
+            <button
+              type="button"
+              className="btn-hero-primary"
               onClick={() => onOpenModal?.('grah-shanti', true)}
             >
-              <svg style={{ width: '15px', height: '15px', fill: '#FFF' }} viewBox="0 0 24 24">
-                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
-              </svg>
-              Book a Pooja
+              <span>🕉️</span> Call / Book a Pandit
             </button>
-            <a href="/poojas" className="btn-hero-secondary">
-              <svg style={{ width: '15px', height: '15px', fill: '#801318' }} viewBox="0 0 24 24">
-                <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
-              </svg>
-              Explore All Poojas
-            </a>
+            <button
+              type="button"
+              className="btn-hero-secondary"
+              onClick={() => onOpenPortal?.('CLIENT')}
+            >
+              <span>🔐</span> Access 3 Portals
+            </button>
           </div>
         </div>
 
         <div className="hero-visual">
           <div className="hero-slider-box">
-            {HERO_SLIDES.map((slide, index) => (
-              <div 
-                key={slide.id} 
-                className={`hero-slide-item ${index === currentSlide ? 'active' : ''}`}
-              >
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  width={1200}
-                  height={675}
-                  priority={index === 0}
-                  className="hero-img"
-                />
-                <div className="hero-slide-caption">
-                  <span className="caption-tag">{slide.tag}</span>
-                  <p>{slide.title}</p>
-                </div>
+            <div className="hero-slide-item active">
+              <FastImage
+                src={slide.image}
+                alt={slide.title}
+                width={640}
+                height={380}
+                priority={true}
+                className="hero-img"
+              />
+              <div className="hero-slide-caption">
+                <span className="caption-tag">{slide.tag}</span>
+                <p>{slide.title}</p>
+                <small>{slide.desc}</small>
               </div>
-            ))}
+            </div>
 
             <div className="hero-slider-dots">
               {HERO_SLIDES.map((_, idx) => (

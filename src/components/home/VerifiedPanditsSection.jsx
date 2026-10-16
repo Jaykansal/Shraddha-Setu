@@ -1,77 +1,68 @@
+'use client';
+
 import { VERIFIED_PANDITS } from '@/data/pandits';
 
 export default function VerifiedPanditsSection({ onOpenPanditPortal }) {
   return (
-    <section className="pandits-section" id="pandits">
-      <div className="pandits-container">
-        <div className="section-header-center">
-          <div className="section-pill-tag">OUR ACHARYAS & SCHOLARS</div>
-          <h2 className="section-title">Verified & Gurukul-Trained Pandits</h2>
-          <div className="section-divider">
-            <span>❖</span><span>🪷</span><span>❖</span>
-          </div>
-          <p className="section-subtitle">
-            Experienced Sanskrit scholars, Jyotish Acharyas, and Vedic priests with over a decade of ritual dedication.
-          </p>
+    <section className="section-pandits" id="pandits">
+      <div className="section-header-row">
+        <div className="section-header-left">
+          <h2 className="section-title">Gurukul Certified Vedic Scholars &amp; Acharyas</h2>
+          <span className="section-sub-desc">
+            500+ Verified Pandits from Kashi, Mathura, Haridwar, Ujjain and Tirupati trained in Rig, Sama, and Yajur Veda.
+          </span>
         </div>
+        <button
+          type="button"
+          className="btn-join-pandit"
+          onClick={onOpenPanditPortal}
+        >
+          <span>🕉️</span> Join as Vedic Pandit
+        </button>
+      </div>
 
-        <div className="pandits-grid">
-          {VERIFIED_PANDITS.map((p) => (
-            <div key={p.id} className="pandit-profile-card">
-              <div className="pandit-card-top">
-                <div className="pandit-avatar">
-                  <span>🕉️</span>
-                </div>
-                <div>
-                  <div className="pandit-name-row">
-                    <h4>{p.name}</h4>
-                    {p.verified && <span className="verified-check" title="Verified Acharya">✓ Verified</span>}
-                  </div>
-                  <span className="pandit-title">{p.title}</span>
-                </div>
+      <div className="pandits-grid">
+        {VERIFIED_PANDITS.map((p) => (
+          <div key={p.id} className="pandit-card">
+            <div className="pandit-card-top">
+              <div className="pandit-avatar-box">
+                <span className="pandit-avatar-emoji">🕉️</span>
+                <span className="pandit-verified-badge" title="Gurukul Certified">✓</span>
               </div>
-
-              <div className="pandit-card-body">
-                <div className="pandit-stat-row">
-                  <span>🎓 Gurukul:</span>
-                  <strong>{p.gurukul}</strong>
+              <div className="pandit-meta">
+                <h4 className="pandit-name">{p.name}</h4>
+                <span className="pandit-title">{p.title}</span>
+                <div className="pandit-rating">
+                  <span>★ {p.rating}</span>
+                  <small>({p.poojasCompleted} Pujas Conducted)</small>
                 </div>
-                <div className="pandit-stat-row">
-                  <span>⏳ Experience:</span>
-                  <strong>{p.experience} ({p.poojasCompleted}+ Poojas)</strong>
-                </div>
-                <div className="pandit-stat-row">
-                  <span>📍 Service Cities:</span>
-                  <strong>{p.city}</strong>
-                </div>
-                <div className="pandit-stat-row">
-                  <span>🗣️ Languages:</span>
-                  <strong>{p.languages.join(', ')}</strong>
-                </div>
-              </div>
-
-              <div className="pandit-card-footer">
-                <span className="pandit-rating">★ {p.rating} / 5.0 Rating</span>
-                <span className="expert-tag">{p.specialization.split(',')[0]}</span>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* PANDIT RECRUITMENT BANNER */}
-        <div className="pandit-join-banner">
-          <div>
-            <h3>Are You a Qualified Vedic Pandit / Acharya?</h3>
-            <p>Join ShraddhaSetu to serve devotees with dignity, flexible schedules, and guaranteed fair Dakshina.</p>
+            <div className="pandit-details">
+              <div className="detail-item">
+                <strong>Gurukul:</strong>
+                <span>{p.gurukul}</span>
+              </div>
+              <div className="detail-item">
+                <strong>Specialization:</strong>
+                <span>{p.specialization}</span>
+              </div>
+              <div className="detail-item">
+                <strong>Experience &amp; City:</strong>
+                <span>{p.experience} • {p.city}</span>
+              </div>
+              <div className="detail-item">
+                <strong>Languages:</strong>
+                <span>{p.languages.join(', ')}</span>
+              </div>
+            </div>
+
+            <div className="pandit-card-footer">
+              <span className="status-indicator available">● Available for Muhurat</span>
+            </div>
           </div>
-          <button 
-            type="button" 
-            className="btn-pandit-register"
-            onClick={onOpenPanditPortal}
-          >
-            Register on Pandit Portal
-          </button>
-        </div>
+        ))}
       </div>
     </section>
   );

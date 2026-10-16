@@ -2,7 +2,7 @@ export const POOJA_SERVICES = [
   {
     id: 'grah-shanti',
     title: 'Grah Shanti Pooja',
-    subtitle: 'For peace & harmony',
+    subtitle: 'For peace & domestic harmony',
     priceWithoutSamagri: 1500, // Pandit Dakshina only
     samagriCost: 600, // Complete 100% Pure Vedic Samagri Kit
     priceWithSamagri: 2100, // Total with Samagri
@@ -10,6 +10,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹2,100',
     duration: '2 - 3 Hours',
     deity: 'Lord Ganesha & Navagraha',
+    category: 'DOSHA SHANTI',
+    badge: 'DOSHA SHANTI',
     samagriIncluded: true,
     image: '/images/pooja_grah_shanti.png',
     samagriKit: [
@@ -34,6 +36,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹2,500',
     duration: '3 - 4 Hours',
     deity: 'Lord Shiva',
+    category: 'HEALTH',
+    badge: 'HEALTH',
     samagriIncluded: true,
     image: '/images/pooja_mrityunjaya.png',
     samagriKit: [
@@ -57,6 +61,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹1,800',
     duration: '2 Hours',
     deity: 'Mata Lakshmi & Lord Kuber',
+    category: 'WEALTH',
+    badge: 'WEALTH',
     samagriIncluded: true,
     image: '/images/pooja_lakshmi.png',
     samagriKit: [
@@ -80,6 +86,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹2,300',
     duration: '2.5 Hours',
     deity: 'Lord Vishnu (Satyanarayan)',
+    category: 'HAVAN',
+    badge: 'HAVAN',
     samagriIncluded: true,
     image: '/images/pooja_satyanarayan.png',
     samagriKit: [
@@ -103,6 +111,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹3,100',
     duration: '3 Hours',
     deity: 'Nine Planetary Deities (Navagraha)',
+    category: 'DOSHA SHANTI',
+    badge: 'DOSHA SHANTI',
     samagriIncluded: true,
     image: '/images/pooja_navagraha.png',
     samagriKit: [
@@ -118,7 +128,7 @@ export const POOJA_SERVICES = [
   {
     id: 'griha-pravesh',
     title: 'Griha Pravesh Pooja',
-    subtitle: 'For new home',
+    subtitle: 'For auspicious new home',
     priceWithoutSamagri: 2500,
     samagriCost: 1000,
     priceWithSamagri: 3500,
@@ -126,6 +136,8 @@ export const POOJA_SERVICES = [
     formattedWithSamagri: '₹3,500',
     duration: '4 Hours',
     deity: 'Vastu Purush & Ganesha',
+    category: 'VASTU',
+    badge: 'VASTU',
     samagriIncluded: true,
     image: '/images/pooja_griha_pravesh.png',
     samagriKit: [

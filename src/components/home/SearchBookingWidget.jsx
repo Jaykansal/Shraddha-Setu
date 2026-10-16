@@ -8,7 +8,7 @@ export default function SearchBookingWidget({ onSearch }) {
   const [pooja, setPooja] = useState('');
   const [occasion, setOccasion] = useState('');
   const [location, setLocation] = useState('');
-  const [date, setDate] = useState('2026-10-15');
+  const [date, setDate] = useState('2026-10-22');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function SearchBookingWidget({ onSearch }) {
               <select value={pooja} onChange={(e) => setPooja(e.target.value)}>
                 <option value="">Choose Pooja</option>
                 {POOJA_SERVICES.map((p) => (
-                  <option key={p.id} value={p.title}>{p.title}</option>
+                  <option key={p.id} value={p.id}>{p.title}</option>
                 ))}
               </select>
             </div>
@@ -53,7 +53,7 @@ export default function SearchBookingWidget({ onSearch }) {
           </div>
         </div>
 
-        {/* 3. Your Location */}
+        {/* 3. Location */}
         <div className="search-field">
           <div className="field-icon">
             <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
@@ -78,21 +78,17 @@ export default function SearchBookingWidget({ onSearch }) {
           <div className="field-text">
             <span className="field-label">Preferred Date</span>
             <div className="field-value">
-              <input 
-                type="date" 
-                value={date} 
+              <input
+                type="date"
+                value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
             </div>
           </div>
         </div>
 
-        {/* Find Pooja CTA */}
         <button type="submit" className="btn-find-pooja">
-          <svg style={{ width: '14px', height: '14px', fill: '#FFF' }} viewBox="0 0 24 24">
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-          </svg>
-          Find Pooja
+          <span>🔍</span> Find Pandit Ji
         </button>
       </form>
     </div>

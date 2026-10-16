@@ -12,7 +12,7 @@ import VerifiedPanditsSection from '@/components/home/VerifiedPanditsSection';
 import BrandSidebar from '@/components/layout/BrandSidebar';
 
 export default function PanditsPage() {
-  const [authModal, setAuthModal] = useState({ isOpen: false, role: 'CLIENT' });
+  const [authModal, setAuthModal] = useState({ isOpen: false, role: 'PANDIT' });
   const [bookingModal, setBookingModal] = useState({ isOpen: false, poojaId: 'grah-shanti', withSamagri: true });
 
   return (
@@ -20,18 +20,20 @@ export default function PanditsPage() {
       <div className="showcase-layout">
         <BrandSidebar onOpenModal={(role) => setAuthModal({ isOpen: true, role })} />
         <main className="main-website-wrapper">
-          <TopBar />
-          <Navbar 
-            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} 
-            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })} 
+          <TopBar onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} />
+          <Navbar
+            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })}
+            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })}
           />
 
           <div className="route-header-banner">
             <div className="route-breadcrumb">
-              <Link href="/">Home</Link> &nbsp;❯&nbsp; <span>Verified Pandits</span>
+              <Link href="/">Home</Link> &nbsp;›&nbsp; <span>Verified Pandits</span>
             </div>
-            <h1 className="route-page-title">Gurukul Certified Vedic Scholars & Acharyas</h1>
-            <p className="route-page-subtitle">500+ Verified Pandits from Kashi, Mathura, Haridwar, Ujjain and Tirupati trained in Rig, Sama, and Yajur Veda.</p>
+            <h1 className="route-page-title">Gurukul Certified Vedic Scholars &amp; Acharyas</h1>
+            <p className="route-page-subtitle">
+              500+ Verified Pandits from Kashi, Mathura, Haridwar, Ujjain and Tirupati trained in Rig, Sama, and Yajur Veda.
+            </p>
           </div>
 
           <VerifiedPanditsSection onOpenPanditPortal={() => setAuthModal({ isOpen: true, role: 'PANDIT' })} />
@@ -41,16 +43,16 @@ export default function PanditsPage() {
         </main>
       </div>
 
-      <AuthModal 
-        isOpen={authModal.isOpen} 
-        initialRole={authModal.role} 
-        onClose={() => setAuthModal({ ...authModal, isOpen: false })} 
+      <AuthModal
+        isOpen={authModal.isOpen}
+        initialRole={authModal.role}
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
       />
-      <BookingModal 
-        isOpen={bookingModal.isOpen} 
-        initialPoojaId={bookingModal.poojaId} 
-        initialWithSamagri={bookingModal.withSamagri} 
-        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })} 
+      <BookingModal
+        isOpen={bookingModal.isOpen}
+        initialPoojaId={bookingModal.poojaId}
+        initialWithSamagri={bookingModal.withSamagri}
+        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })}
       />
     </div>
   );

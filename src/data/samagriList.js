@@ -5,7 +5,7 @@ export const SAMAGRI_STANDARDS = {
     {
       title: 'A2 Vedic Desi Cow Ghee',
       desc: 'Bilona method pure cow ghee with zero additives, ensuring sacred havan smoke that purifies the atmosphere.',
-      icon: '🧈'
+      icon: '🪔'
     },
     {
       title: 'Original Gangajal from Gomukh/Gangotri',
@@ -15,7 +15,7 @@ export const SAMAGRI_STANDARDS = {
     {
       title: 'Bhimseni Pure Camphor (Karpoor)',
       desc: '100% natural herbal camphor that leaves no black soot and releases divine calming aroma.',
-      icon: '🪔'
+      icon: '🪵'
     },
     {
       title: 'Pure Mango & Samidha Wood',
@@ -29,7 +29,7 @@ export const SAMAGRI_STANDARDS = {
     },
     {
       title: 'Eco-Friendly Biodegradable Packaging',
-      desc: 'Hygeinic and airtight brass, jute, and paper packing that maintains sanctity and freshness.',
+      desc: 'Hygienic and airtight brass, jute, and paper packing that maintains sanctity and freshness.',
       icon: '📦'
     }
   ]

@@ -40,7 +40,7 @@ export const VERIFIED_PANDITS = [
   },
   {
     id: 'p-4',
-    name: 'Acharya Shambhu Nath Mishra',
+    name: 'Acharya Shambu Nath Mishra',
     title: 'Tirupati Gurukul Veda Scholar',
     gurukul: 'SV Vedic University, Tirupati',
     experience: '15+ Years',

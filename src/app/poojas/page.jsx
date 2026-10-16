@@ -21,8 +21,13 @@ export default function PoojasPage() {
   const categories = ['ALL', 'HAVAN', 'VASTU', 'DOSHA SHANTI', 'HEALTH', 'WEALTH'];
 
   const filteredPoojas = POOJA_SERVICES.filter((p) => {
-    const matchesFilter = filter === 'ALL' || (p.badge && p.badge.toUpperCase().includes(filter)) || (p.title.toUpperCase().includes(filter));
-    const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter = filter === 'ALL'
+      || (p.category && p.category.toUpperCase().includes(filter))
+      || (p.badge && p.badge.toUpperCase().includes(filter))
+      || (p.title.toUpperCase().includes(filter));
+    const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase())
+      || p.description.toLowerCase().includes(search.toLowerCase())
+      || p.deity.toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -31,24 +36,26 @@ export default function PoojasPage() {
       <div className="showcase-layout">
         <BrandSidebar onOpenModal={(role) => setAuthModal({ isOpen: true, role })} />
         <main className="main-website-wrapper">
-          <TopBar />
-          <Navbar 
-            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} 
-            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })} 
+          <TopBar onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} />
+          <Navbar
+            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })}
+            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })}
           />
 
           <div className="route-header-banner">
             <div className="route-breadcrumb">
-              <Link href="/">Home</Link> &nbsp;❯&nbsp; <span>Vedic Poojas Catalog</span>
+              <Link href="/">Home</Link> &nbsp;›&nbsp; <span>Vedic Poojas Catalog</span>
             </div>
-            <h1 className="route-page-title">Explore Sacred Poojas & Havans</h1>
-            <p className="route-page-subtitle">Authentic Vedic Vidhi performed by Gurukul scholars. Complete transparency with or without samagri kits.</p>
+            <h1 className="route-page-title">Explore Sacred Poojas &amp; Havans</h1>
+            <p className="route-page-subtitle">
+              Authentic Vedic Vidhi performed by Gurukul scholars. Complete transparency with or without samagri kits.
+            </p>
 
             <div className="catalog-filters-bar">
               <div className="catalog-search-box">
-                <input 
-                  type="text" 
-                  placeholder="Search pooja by name or deity..." 
+                <input
+                  type="text"
+                  placeholder="Search puja by name, deity or remedy..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="catalog-search-input"
@@ -56,9 +63,9 @@ export default function PoojasPage() {
               </div>
               <div className="catalog-category-pills">
                 {categories.map((cat) => (
-                  <button 
-                    key={cat} 
-                    type="button" 
+                  <button
+                    key={cat}
+                    type="button"
                     className={'category-pill-btn ' + (filter === cat ? 'active' : '')}
                     onClick={() => setFilter(cat)}
                   >
@@ -72,10 +79,10 @@ export default function PoojasPage() {
           <section className="section-popular full-catalog-section">
             <div className="cards-grid full-grid">
               {filteredPoojas.map((pooja) => (
-                <PoojaCard 
-                  key={pooja.id} 
-                  pooja={pooja} 
-                  onBook={(poojaId, withSamagri) => setBookingModal({ isOpen: true, poojaId, withSamagri })} 
+                <PoojaCard
+                  key={pooja.id}
+                  pooja={pooja}
+                  onBook={(poojaId, withSamagri) => setBookingModal({ isOpen: true, poojaId, withSamagri })}
                 />
               ))}
             </div>
@@ -86,16 +93,16 @@ export default function PoojasPage() {
         </main>
       </div>
 
-      <AuthModal 
-        isOpen={authModal.isOpen} 
-        initialRole={authModal.role} 
-        onClose={() => setAuthModal({ ...authModal, isOpen: false })} 
+      <AuthModal
+        isOpen={authModal.isOpen}
+        initialRole={authModal.role}
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
       />
-      <BookingModal 
-        isOpen={bookingModal.isOpen} 
-        initialPoojaId={bookingModal.poojaId} 
-        initialWithSamagri={bookingModal.withSamagri} 
-        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })} 
+      <BookingModal
+        isOpen={bookingModal.isOpen}
+        initialPoojaId={bookingModal.poojaId}
+        initialWithSamagri={bookingModal.withSamagri}
+        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })}
       />
     </div>
   );

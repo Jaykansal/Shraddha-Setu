@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import TopBar from '@/components/layout/TopBar';
 import Navbar from '@/components/layout/Navbar';
 import FooterStats from '@/components/layout/FooterStats';
@@ -10,6 +9,7 @@ import Footer from '@/components/layout/Footer';
 import AuthModal from '@/components/ui/AuthModal';
 import BookingModal from '@/components/ui/BookingModal';
 import BrandSidebar from '@/components/layout/BrandSidebar';
+import FastImage from '@/components/ui/FastImage';
 import { BLOG_POSTS } from '@/data/blogs';
 
 export default function BlogPage() {
@@ -29,25 +29,27 @@ export default function BlogPage() {
       <div className="showcase-layout">
         <BrandSidebar onOpenModal={(role) => setAuthModal({ isOpen: true, role })} />
         <main className="main-website-wrapper">
-          <TopBar />
-          <Navbar 
-            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} 
-            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })} 
+          <TopBar onOpenAuth={(role) => setAuthModal({ isOpen: true, role })} />
+          <Navbar
+            onOpenAuth={(role) => setAuthModal({ isOpen: true, role })}
+            onOpenBooking={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })}
           />
 
           <div className="route-header-banner">
             <div className="route-breadcrumb">
-              <Link href="/">Home</Link> &nbsp;❯&nbsp; <span>Spiritual Blog & Vedic Wisdom</span>
+              <Link href="/">Home</Link> &nbsp;›&nbsp; <span>Spiritual Blog &amp; Vedic Wisdom</span>
             </div>
             <h1 className="route-page-title">ShraddhaSetu Spiritual Blog</h1>
-            <p className="route-page-subtitle">Authentic articles on Panchang, Shubh Muhurats, Purana Kathas, and Vedic Ritual Significance</p>
+            <p className="route-page-subtitle">
+              Authentic articles on Panchang, Shubh Muhurats, Purana Kathas, and Vedic Ritual Significance.
+            </p>
 
             <div className="catalog-filters-bar">
               <div className="catalog-category-pills">
                 {tags.map((t) => (
-                  <button 
-                    key={t} 
-                    type="button" 
+                  <button
+                    key={t}
+                    type="button"
                     className={'category-pill-btn ' + (selectedTag === t ? 'active' : '')}
                     onClick={() => setSelectedTag(t)}
                   >
@@ -63,11 +65,11 @@ export default function BlogPage() {
               {filteredPosts.map((post) => (
                 <article key={post.id} className="blog-card">
                   <div className="blog-card-image-box">
-                    <Image
+                    <FastImage
                       src={post.image}
                       alt={post.title}
                       width={400}
-                      height={240}
+                      height={220}
                       className="blog-img"
                     />
                     <span className="blog-card-category">{post.category}</span>
@@ -78,7 +80,7 @@ export default function BlogPage() {
                       <span>•</span>
                       <span>📅 {post.date}</span>
                       <span>•</span>
-                      <span>⏳ {post.readTime}</span>
+                      <span>⏱️ {post.readTime}</span>
                     </div>
                     <h3 className="blog-card-title">{post.title}</h3>
                     <p className="blog-card-excerpt">{post.excerpt}</p>
@@ -88,12 +90,12 @@ export default function BlogPage() {
                           <span key={tag} className="blog-tag-badge">#{tag}</span>
                         ))}
                       </div>
-                      <button 
-                        type="button" 
-                        className="btn-read-article" 
+                      <button
+                        type="button"
+                        className="btn-read-article"
                         onClick={() => setBookingModal({ isOpen: true, poojaId: 'grah-shanti', withSamagri: true })}
                       >
-                        Book Related Pooja ➔
+                        Book Related Pooja →
                       </button>
                     </div>
                   </div>
@@ -107,16 +109,16 @@ export default function BlogPage() {
         </main>
       </div>
 
-      <AuthModal 
-        isOpen={authModal.isOpen} 
-        initialRole={authModal.role} 
-        onClose={() => setAuthModal({ ...authModal, isOpen: false })} 
+      <AuthModal
+        isOpen={authModal.isOpen}
+        initialRole={authModal.role}
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
       />
-      <BookingModal 
-        isOpen={bookingModal.isOpen} 
-        initialPoojaId={bookingModal.poojaId} 
-        initialWithSamagri={bookingModal.withSamagri} 
-        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })} 
+      <BookingModal
+        isOpen={bookingModal.isOpen}
+        initialPoojaId={bookingModal.poojaId}
+        initialWithSamagri={bookingModal.withSamagri}
+        onClose={() => setBookingModal({ ...bookingModal, isOpen: false })}
       />
     </div>
   );

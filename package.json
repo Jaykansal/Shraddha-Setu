@@ -1,17 +1,15 @@
 {
-  "name": "shraddhasetu-nextjs",
-  "version": "3.0.0",
+  "name": "shraddhasetu-web",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3000"
   },
   "dependencies": {
     "next": "^14.2.0",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "mongoose": "^8.3.0",
-    "jsonwebtoken": "^9.0.2"
+    "react-dom": "^18.3.0"
   }
 }
