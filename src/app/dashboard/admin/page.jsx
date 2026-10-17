@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import Navbar from '@/components/layout/Navbar';
 import TopBar from '@/components/layout/TopBar';
 import Footer from '@/components/layout/Footer';
-import AuthModal from '@/components/ui/AuthModal';
+import AdminLoginForm from '@/components/portal/AdminLoginForm';
 import { POOJA_SERVICES } from '@/data/poojas';
 
 export default function AdminDashboard() {
@@ -71,45 +71,13 @@ export default function AdminDashboard() {
   // 2. UNAUTHENTICATED OR NON-ADMIN ACCESS GATE
   if (!user || user.role !== 'ADMIN') {
     return (
-      <div className="portal-page admin-portal-theme">
-        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
-        <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => {}} />
-
-        <main className="portal-main-container">
-          <div className="portal-lock-wrapper">
-            <div className="portal-auth-card">
-              <div className="auth-icon-circle">🏛️</div>
-              <h2>Mandir Samiti Admin Console</h2>
-              <p className="auth-card-subtitle">
-                {user
-                  ? `You are currently signed in as "${user.name}" (${user.role}). This console requires verified Administrator clearance.`
-                  : 'Please sign in with your administrative credentials to manage pan-India Vedic operations, verify pandit certifications, and govern Muhurat assignments.'}
-              </p>
-
-              <div className="auth-card-actions">
-                <button
-                  type="button"
-                  className="btn-portal-primary-auth"
-                  onClick={() => setAuthModalOpen(true)}
-                >
-                  <span>🔐</span> {user ? 'Switch to Admin Account' : 'Sign In as Administrator'}
-                </button>
-                <Link href="/" className="btn-portal-back-home">
-                  ← Return to Homepage
-                </Link>
-              </div>
-            </div>
-          </div>
+      <div className="portal-dedicated-page admin-page-background">
+        <TopBar />
+        <Navbar />
+        <main className="dedicated-page-container">
+          <AdminLoginForm redirectUrl="/dashboard/admin" />
         </main>
-
-        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
-
-        <AuthModal
-          isOpen={authModalOpen}
-          initialRole="ADMIN"
-          redirectUrl="/dashboard/admin"
-          onClose={() => setAuthModalOpen(false)}
-        />
+        <Footer />
       </div>
     );
   }
@@ -362,14 +330,7 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      <Footer onOpenAuth={() => setAuthModalOpen(true)} />
-
-      <AuthModal
-        isOpen={authModalOpen}
-        initialRole="ADMIN"
-        redirectUrl="/dashboard/admin"
-        onClose={() => setAuthModalOpen(false)}
-      />
+      <Footer />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import Navbar from '@/components/layout/Navbar';
 import TopBar from '@/components/layout/TopBar';
 import Footer from '@/components/layout/Footer';
-import AuthModal from '@/components/ui/AuthModal';
+import PanditLoginForm from '@/components/portal/PanditLoginForm';
 
 export default function PanditDashboard() {
   const router = useRouter();
@@ -57,45 +57,13 @@ export default function PanditDashboard() {
   // 2. UNAUTHENTICATED OR NON-PANDIT ACCESS GATE
   if (!user || user.role !== 'PANDIT') {
     return (
-      <div className="portal-page pandit-portal-theme">
-        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
-        <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
-
-        <main className="portal-main-container">
-          <div className="portal-lock-wrapper">
-            <div className="portal-auth-card">
-              <div className="auth-icon-circle">🕉️</div>
-              <h2>Vedic Pandit / Acharya Portal</h2>
-              <p className="auth-card-subtitle">
-                {user
-                  ? `You are currently signed in as "${user.name}" (${user.role}). This portal is exclusively for verified Vedic Pandits & Acharyas.`
-                  : 'Please sign in to access your Acharya Portal, accept puja booking requests in your city, and manage your Dakshina ledger.'}
-              </p>
-
-              <div className="auth-card-actions">
-                <button
-                  type="button"
-                  className="btn-portal-primary-auth"
-                  onClick={() => setAuthModalOpen(true)}
-                >
-                  <span>🔐</span> {user ? 'Switch to Pandit Account' : 'Sign In as Pandit Ji'}
-                </button>
-                <Link href="/" className="btn-portal-back-home">
-                  ← Return to Homepage
-                </Link>
-              </div>
-            </div>
-          </div>
+      <div className="portal-dedicated-page pandit-page-background">
+        <TopBar />
+        <Navbar />
+        <main className="dedicated-page-container">
+          <PanditLoginForm redirectUrl="/dashboard/pandit" />
         </main>
-
-        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
-
-        <AuthModal
-          isOpen={authModalOpen}
-          initialRole="PANDIT"
-          redirectUrl="/dashboard/pandit"
-          onClose={() => setAuthModalOpen(false)}
-        />
+        <Footer />
       </div>
     );
   }
@@ -445,14 +413,7 @@ export default function PanditDashboard() {
         )}
       </main>
 
-      <Footer onOpenAuth={() => setAuthModalOpen(true)} />
-
-      <AuthModal
-        isOpen={authModalOpen}
-        initialRole="PANDIT"
-        redirectUrl="/dashboard/pandit"
-        onClose={() => setAuthModalOpen(false)}
-      />
+      <Footer />
     </div>
   );
 }

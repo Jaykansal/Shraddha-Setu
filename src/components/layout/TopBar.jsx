@@ -1,24 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
-export default function TopBar({ onOpenAuth }) {
-  const router = useRouter();
+export default function TopBar() {
   const { user } = useAuth();
-
-  const handlePortalClick = (targetRole, path) => {
-    if (user && user.role === targetRole) {
-      router.push(path);
-    } else {
-      const roleName = targetRole === 'PANDIT' ? 'Vedic Pandit' : (targetRole === 'ADMIN' ? 'Mandir Admin' : 'Devotee');
-      if (onOpenAuth) {
-        onOpenAuth(targetRole, `Please sign in to access the ${roleName} portal.`, path);
-      } else {
-        router.push(path);
-      }
-    }
-  };
 
   return (
     <div className="top-bar">
@@ -34,30 +20,27 @@ export default function TopBar({ onOpenAuth }) {
         </div>
 
         <div className="portal-quick-links">
-          <button
-            type="button"
+          <Link
+            href={user?.role === 'CLIENT' ? '/dashboard/devotee' : '/portal/devotee'}
             className="portal-pill pill-devotee"
-            onClick={() => handlePortalClick('CLIENT', '/dashboard/devotee')}
             title="Yajman Devotee Portal"
           >
-            🙏 Devotee
-          </button>
-          <button
-            type="button"
+            🙏 Devotee Portal
+          </Link>
+          <Link
+            href={user?.role === 'PANDIT' ? '/dashboard/pandit' : '/portal/pandit'}
             className="portal-pill pill-pandit"
-            onClick={() => handlePortalClick('PANDIT', '/dashboard/pandit')}
             title="Vedic Acharya Portal"
           >
-            🕉️ Pandit Ji
-          </button>
-          <button
-            type="button"
+            🕉️ Pandit Portal
+          </Link>
+          <Link
+            href={user?.role === 'ADMIN' ? '/dashboard/admin' : '/portal/admin'}
             className="portal-pill pill-admin"
-            onClick={() => handlePortalClick('ADMIN', '/dashboard/admin')}
             title="Mandir Samiti Admin Console"
           >
-            🏛️ Admin
-          </button>
+            🏛️ Admin Console
+          </Link>
         </div>
       </div>
     </div>

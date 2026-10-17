@@ -19,7 +19,7 @@ export default function Navbar({ onOpenAuth, onOpenBooking }) {
 
   const getPortalName = () => {
     if (isAdmin) return 'Mandir Admin';
-    if (isPandit) return 'Acharya Portal';
+    if (isPandit) return 'Acharya Desk';
     return 'Devotee Portal';
   };
 
@@ -45,8 +45,10 @@ export default function Navbar({ onOpenAuth, onOpenBooking }) {
             onClick={() => {
               if (user) {
                 router.push('/panchang');
-              } else {
+              } else if (onOpenAuth) {
                 onOpenAuth('CLIENT', 'दैनिक पंचांग व शुभ मुहूर्त देखने के लिए कृपया लॉगिन करें।', '/panchang');
+              } else {
+                router.push('/portal/devotee');
               }
             }}
           >
@@ -81,23 +83,29 @@ export default function Navbar({ onOpenAuth, onOpenBooking }) {
             </button>
           </div>
         ) : (
-          <>
-            <button
-              type="button"
-              className="btn-access-portal"
-              onClick={() => onOpenAuth('CLIENT')}
-              title="Access Devotee, Pandit, or Admin Portal"
+          <div className="nav-guest-actions">
+            <Link
+              href="/portal/pandit"
+              className="btn-nav-pandit-portal"
+              title="Vedic Pandit & Acharya Desk"
             >
-              <span>🔐</span> Login / Portals
-            </button>
+              <span>🕉️</span> पंडित पोर्टल
+            </Link>
+            <Link
+              href="/portal/devotee"
+              className="btn-access-portal"
+              title="Devotee Sign In / Register"
+            >
+              <span>🔐</span> यजमान लॉगिन
+            </Link>
             <button
               type="button"
               className="btn-book-nav"
-              onClick={() => onOpenBooking('grah-shanti', true)}
+              onClick={() => onOpenBooking ? onOpenBooking('grah-shanti', true) : router.push('/poojas')}
             >
               Book a Pooja
             </button>
-          </>
+          </div>
         )}
       </div>
     </header>
