@@ -1765,3 +1765,1115 @@ a {
   .step-arrow { transform: rotate(90deg); margin: 6px 0; }
   .portal-metrics-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   PROFESSIONAL FULL-WIDTH LAYOUT & ELEVATION
+   ========================================================================== */
+.main-full-layout {
+  width: 100%;
+  max-width: 100%;
+  background: var(--cream-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-full-layout .navbar,
+.main-full-layout .top-bar-sacred,
+.main-full-layout .hero-slider,
+.main-full-layout .trust-bar,
+.main-full-layout .section-portals-showcase,
+.main-full-layout .section-carousel,
+.main-full-layout .section-verified-pandits,
+.main-full-layout .section-process-and-app,
+.main-full-layout .section-footer-stats,
+.main-full-layout .footer-main {
+  width: 100%;
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Professional Hero Section */
+.hero-slider {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.hero-slide {
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 30px rgba(92, 11, 15, 0.12);
+  border: 1px solid rgba(234, 219, 200, 0.8);
+}
+
+/* Auth Modal Reason Callout Banner */
+.auth-reason-banner {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 1px solid #F59E0B;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.auth-reason-banner .reason-icon {
+  font-size: 24px;
+}
+
+.auth-reason-banner .reason-content strong {
+  display: block;
+  font-size: 13px;
+  color: #92400E;
+  margin-bottom: 2px;
+}
+
+.auth-reason-banner .reason-content p {
+  font-size: 12px;
+  color: #78350F;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Nav Link Button for Panchang */
+.nav-link-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--maroon-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+  background: rgba(232, 139, 0, 0.08);
+  border: 1px solid rgba(232, 139, 0, 0.25);
+}
+
+.nav-link-btn:hover {
+  background: rgba(232, 139, 0, 0.18);
+  border-color: var(--saffron-primary);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   HOMEPAGE PANCHANG WIDGET
+   ========================================================================== */
+.section-panchang-widget {
+  max-width: 1360px;
+  margin: -10px auto 32px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.panchang-widget-card {
+  background: linear-gradient(135deg, #FFFDF8 0%, #FAF4E8 50%, #F5ECDA 100%);
+  border: 1px solid #E5D5B8;
+  border-left: 5px solid var(--saffron-primary);
+  border-radius: var(--radius-lg);
+  padding: 24px 30px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(128, 19, 24, 0.06);
+}
+
+.panchang-widget-left .widget-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.vedic-pill-maroon {
+  background: var(--maroon-primary);
+  color: #FFFDF9;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.location-pill {
+  background: #E5E7EB;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.widget-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--maroon-primary);
+  margin-bottom: 4px;
+}
+
+.widget-samvat {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.widget-quick-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.metric-box {
+  background: #FFFFFF;
+  border: 1px solid #EAE0D0;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-lbl {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 2px;
+}
+
+.metric-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--maroon-primary);
+}
+
+.widget-lock-box {
+  background: #FFFFFF;
+  border: 1px solid #E8DCBE;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.muhurat-preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.preview-item.item-shubh {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.preview-item.item-ashubh {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.preview-item .label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.preview-item .time {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.widget-cta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.btn-panchang-unlock-cta {
+  background: linear-gradient(135deg, var(--saffron-primary) 0%, #B45309 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 11px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(232, 139, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-panchang-unlock-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(232, 139, 0, 0.4);
+}
+
+.hint-lock-text {
+  font-size: 10px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* ==========================================================================
+   DEDICATED PANCHANG PAGE (/panchang)
+   ========================================================================== */
+.panchang-page-hero {
+  background: linear-gradient(180deg, #4A070A 0%, var(--maroon-primary) 60%, #5C0B0F 100%);
+  color: #FFFDF9;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.panchang-hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.vedic-pill-gold {
+  background: rgba(254, 243, 199, 0.15);
+  border: 1px solid #FDE68A;
+  color: #FEF3C7;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.panchang-title {
+  font-family: var(--font-display);
+  font-size: 34px;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.panchang-subtitle {
+  font-size: 15px;
+  color: #FDE68A;
+  margin-bottom: 16px;
+}
+
+.panchang-date-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(254, 243, 199, 0.3);
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-size: 13px;
+}
+
+.panchang-main-container {
+  max-width: 1280px;
+  margin: -20px auto 48px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 10;
+}
+
+/* City Selector Bar */
+.city-selector-bar {
+  background: #FFFFFF;
+  border: 1px solid #E5D5B8;
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+.city-bar-label {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--maroon-primary);
+  white-space: nowrap;
+}
+
+.city-chips-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.city-chip {
+  background: #F9FAFB;
+  border: 1px solid #D1D5DB;
+  color: #4B5563;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.city-chip:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.city-chip.active {
+  background: var(--maroon-primary);
+  color: #FFFFFF;
+  border-color: var(--maroon-primary);
+}
+
+/* Gated Locked State */
+.panchang-locked-gate-wrapper {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.panchang-blurred-preview {
+  position: absolute;
+  inset: 0;
+  filter: blur(10px);
+  opacity: 0.45;
+  pointer-events: none;
+  background: #FFFDF9;
+  padding: 40px;
+}
+
+.panchang-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.panchang-lock-modal-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 253, 248, 0.98);
+  border: 2px solid var(--saffron-primary);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  max-width: 580px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(92, 11, 15, 0.18);
+  backdrop-filter: blur(12px);
+}
+
+.lock-icon-badge {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--saffron-primary) 0%, #B45309 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 12px;
+  box-shadow: 0 6px 16px rgba(232, 139, 0, 0.35);
+}
+
+.lock-tag-shree {
+  font-size: 12px;
+  color: var(--saffron-primary);
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.panchang-lock-modal-card h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--maroon-primary);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.lock-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.lock-benefits-list {
+  background: #FFF8EB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  text-align: left;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #78350F;
+}
+
+.benefit-check {
+  color: #10B981;
+  font-weight: bold;
+}
+
+.lock-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-unlock-primary {
+  background: linear-gradient(135deg, var(--maroon-primary) 0%, #5C0B0F 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 13px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(92, 11, 15, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-unlock-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(92, 11, 15, 0.4);
+}
+
+.btn-unlock-instant {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #F59E0B;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-unlock-instant:hover {
+  background: #FDE68A;
+}
+
+.lock-note-small {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 14px;
+}
+
+/* Logged-in Panchang Dashboard */
+.panchang-full-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panchang-user-welcome-banner {
+  background: linear-gradient(135deg, #FFFDF8 0%, #FDF7EA 100%);
+  border: 1px solid #E8DCBE;
+  border-left: 5px solid #10B981;
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.welcome-shlok {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--saffron-primary);
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.welcome-text-col h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  color: var(--maroon-primary);
+  margin-bottom: 4px;
+}
+
+.welcome-text-col p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.btn-book-from-panchang {
+  background: linear-gradient(135deg, var(--saffron-primary) 0%, #B45309 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(232, 139, 0, 0.25);
+}
+
+.samvat-bar-card {
+  background: #FFFFFF;
+  border: 1px solid #EAE0D0;
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.samvat-item .label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 2px;
+}
+
+.samvat-item .val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--maroon-primary);
+}
+
+/* 5 Pillars Grid */
+.panchang-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.pillar-card {
+  background: #FFFFFF;
+  border: 1px solid #E5D5B8;
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pillar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(128, 19, 24, 0.08);
+}
+
+.pillar-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--saffron-primary);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.pillar-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--maroon-primary);
+  margin-bottom: 4px;
+}
+
+.pillar-sanskrit {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.pillar-time-badge {
+  background: #FFF8EB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.pillar-next {
+  font-size: 11px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Panchang Subtabs */
+.panchang-subtabs-row {
+  display: flex;
+  gap: 12px;
+  border-bottom: 2px solid #EAE0D0;
+  padding-bottom: 12px;
+}
+
+.panchang-subtab {
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B5563;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.panchang-subtab.active {
+  background: var(--maroon-primary);
+  color: #FFFFFF;
+  border-color: var(--maroon-primary);
+}
+
+/* Muhurat Grid */
+.muhurat-two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.muhurat-box {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  border: 1px solid #E5E7EB;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.muhurat-box.box-shubh {
+  border-top: 4px solid #10B981;
+}
+
+.muhurat-box.box-ashubh {
+  border-top: 4px solid #EF4444;
+}
+
+.box-header-shubh, .box-header-ashubh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.box-header-shubh h4 { color: #065F46; font-size: 16px; }
+.box-header-ashubh h4 { color: #991B1B; font-size: 16px; }
+
+.muhurat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.muhurat-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #F9FAFB;
+  border-radius: var(--radius-md);
+  border: 1px solid #E5E7EB;
+}
+
+.muhurat-item-row.highlight-best {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+
+.item-name-col strong {
+  font-size: 13px;
+  color: #111827;
+  display: block;
+}
+
+.item-name-col p {
+  font-size: 11px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.time-badge-shubh {
+  background: #10B981;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.best-tag {
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+
+.time-badge-ashubh {
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.avoid-tag {
+  background: #FEE2E2;
+  color: #991B1B;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+
+/* Choghadiya Table */
+.choghadiya-table-wrapper {
+  background: #FFFFFF;
+  border: 1px solid #E5D5B8;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.choghadiya-legend {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.legend-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.chip-good { background: #D1FAE5; color: #065F46; }
+.chip-neutral { background: #FEF3C7; color: #92400E; }
+.chip-bad { background: #FEE2E2; color: #991B1B; }
+
+.choghadiya-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.choghadiya-table th {
+  background: #F9FAFB;
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #374151;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.choghadiya-table td {
+  padding: 12px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.tr-choghadiya.type-good .ch-type-indicator { color: #10B981; }
+.tr-choghadiya.type-neutral .ch-type-indicator { color: #F59E0B; }
+.tr-choghadiya.type-bad .ch-type-indicator { color: #EF4444; }
+
+/* Festivals Grid */
+.festivals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.festival-card {
+  background: #FFFFFF;
+  border: 1px solid #E8DCBE;
+  border-top: 4px solid var(--saffron-primary);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.fest-tithi {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--saffron-primary);
+  background: #FFF8EB;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.festival-card h4 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--maroon-primary);
+  margin-bottom: 6px;
+}
+
+.fest-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.fest-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.btn-fest-book {
+  background: #FDF4E8;
+  border: 1px solid var(--saffron-primary);
+  color: var(--maroon-primary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-fest-book:hover {
+  background: var(--maroon-primary);
+  color: #FFFFFF;
+}
+
+/* Ecosystem Banner */
+.vedic-ecosystem-banner {
+  background: linear-gradient(135deg, #5C0B0F 0%, var(--maroon-primary) 50%, #4A070A 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  color: #FFFDF9;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 36px;
+  align-items: center;
+  margin-top: 36px;
+  box-shadow: 0 16px 36px rgba(92, 11, 15, 0.2);
+  border: 1px solid rgba(254, 243, 199, 0.2);
+}
+
+.ecosystem-badge-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.badge-tag {
+  background: var(--saffron-primary);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.badge-tag-alt {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FEF3C7;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.ecosystem-heading {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.ecosystem-sub {
+  font-size: 13px;
+  color: #FEF3C7;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.btn-open-panchang-quick {
+  background: #FEF3C7;
+  color: #92400E;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-open-panchang-quick:hover {
+  background: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.ecosystem-col-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mockup-frame {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.app-icon-floating {
+  position: absolute;
+  bottom: -15px;
+  left: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 2px solid #FEF3C7;
+}
+
+/* Devotee Dashboard Panchang Pane */
+.portal-panchang-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pillar-tile {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pillar-tile .lbl { font-size: 11px; color: #6B7280; }
+.pillar-tile strong { font-size: 14px; color: var(--maroon-primary); margin: 2px 0; }
+.pillar-tile small { font-size: 11px; color: #4B5563; }
+
+.portal-muhurats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.muhurat-mini-box {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.muhurat-mini-box.box-shubh { border-left: 4px solid #10B981; }
+.muhurat-mini-box.box-ashubh { border-left: 4px solid #EF4444; }
+
+.muhurat-mini-box h4 {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.muhurat-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mini-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.text-danger { color: #DC2626; }
+
+/* Responsive adjustments for panchang */
+@media (max-width: 900px) {
+  .panchang-widget-card { grid-template-columns: 1fr; }
+  .panchang-pillars-grid { grid-template-columns: repeat(2, 1fr); }
+  .samvat-bar-card { grid-template-columns: 1fr 1fr; }
+  .muhurat-two-col-grid { grid-template-columns: 1fr; }
+  .festivals-grid { grid-template-columns: 1fr; }
+  .vedic-ecosystem-banner { grid-template-columns: 1fr; }
+  .portal-panchang-grid-4 { grid-template-columns: 1fr 1fr; }
+  .portal-muhurats-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .panchang-pillars-grid { grid-template-columns: 1fr; }
+  .widget-quick-metrics { grid-template-columns: 1fr 1fr; }
+  .panchang-lock-modal-card { padding: 24px 16px; }
+  .samvat-bar-card { grid-template-columns: 1fr; }
+  .portal-panchang-grid-4 { grid-template-columns: 1fr; }
+}

@@ -10,6 +10,7 @@ import TopBar from '@/components/layout/TopBar';
 import Footer from '@/components/layout/Footer';
 import BookingModal from '@/components/ui/BookingModal';
 import AuthModal from '@/components/ui/AuthModal';
+import { getPanchangForCity } from '@/data/panchangData';
 
 export default function DevoteeDashboard() {
   const router = useRouter();
@@ -111,6 +112,13 @@ export default function DevoteeDashboard() {
             onClick={() => setActiveTab('bookings')}
           >
             📋 My Sacred Bookings ({bookings.length})
+          </button>
+          <button
+            type="button"
+            className={`portal-tab-btn ${activeTab === 'panchang' ? 'active' : ''}`}
+            onClick={() => setActiveTab('panchang')}
+          >
+            📅 आज का पंचांग व शुभ मुहूर्त
           </button>
           <button
             type="button"
@@ -248,6 +256,76 @@ export default function DevoteeDashboard() {
             )}
           </section>
         )}
+
+        {/* TAB: DAILY PANCHANG & MUHURAT */}
+        {activeTab === 'panchang' && (() => {
+          const panchang = getPanchangForCity(user?.city?.toLowerCase()?.includes('delhi') ? 'delhi' : (user?.city?.toLowerCase()?.includes('mumbai') ? 'mumbai' : 'varanasi'));
+          return (
+            <section className="portal-tab-content devotee-panchang-pane">
+              <div className="tab-header-flex">
+                <div>
+                  <span className="badge-diy">🕉️ दैनिक वैदिक पंचांग</span>
+                  <h3>{panchang.formattedDate}</h3>
+                  <p className="tab-desc">नगर: <strong>{panchang.city.name}</strong> • विक्रम संवत {panchang.samvat.vikram.split(' ')[0]} • {panchang.samvat.paksha}</p>
+                </div>
+                <Link href="/panchang" className="btn-portal-action">
+                  सम्पूर्ण पंचांग पृष्ठ खोलें →
+                </Link>
+              </div>
+
+              {/* 4 QUICK PILLARS */}
+              <div className="portal-panchang-grid-4">
+                <div className="pillar-tile">
+                  <span className="lbl">तिथि:</span>
+                  <strong>{panchang.core.tithi.name}</strong>
+                  <small>{panchang.core.tithi.endTime}</small>
+                </div>
+                <div className="pillar-tile">
+                  <span className="lbl">नक्षत्र:</span>
+                  <strong>{panchang.core.nakshatra.name}</strong>
+                  <small>{panchang.core.nakshatra.endTime}</small>
+                </div>
+                <div className="pillar-tile">
+                  <span className="lbl">योग व करण:</span>
+                  <strong>{panchang.core.yoga.name}</strong>
+                  <small>{panchang.core.karana.name}</small>
+                </div>
+                <div className="pillar-tile">
+                  <span className="lbl">सूर्योदय / सूर्यास्त:</span>
+                  <strong>{panchang.astronomy.sunrise} / {panchang.astronomy.sunset}</strong>
+                  <small>{panchang.astronomy.sunSign}</small>
+                </div>
+              </div>
+
+              {/* TIMINGS COMPARISON */}
+              <div className="portal-muhurats-row">
+                <div className="muhurat-mini-box box-shubh">
+                  <h4>✨ आज के श्रेष्ठ शुभ मुहूर्त</h4>
+                  <div className="muhurat-mini-list">
+                    {panchang.shubhMuhurat.slice(0, 3).map((item, idx) => (
+                      <div key={idx} className="mini-item">
+                        <span>{item.name}:</span>
+                        <strong>{item.time}</strong>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="muhurat-mini-box box-ashubh">
+                  <h4>⚠️ वर्जित काल (अशुभ समय)</h4>
+                  <div className="muhurat-mini-list">
+                    {panchang.ashubhKaal.slice(0, 3).map((item, idx) => (
+                      <div key={idx} className="mini-item">
+                        <span>{item.name}:</span>
+                        <strong className="text-danger">{item.time}</strong>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* TAB 2: DIY SAMAGRI CHECKLIST */}
         {activeTab === 'samagri_checklist' && (

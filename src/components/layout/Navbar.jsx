@@ -38,6 +38,21 @@ export default function Navbar({ onOpenAuth, onOpenBooking }) {
 
       <ul className={`nav-menu ${mobileMenuOpen ? 'open' : ''}`}>
         <li className="nav-item"><Link href="/">Home</Link></li>
+        <li className="nav-item nav-item-highlight">
+          <button
+            type="button"
+            className="nav-link-btn"
+            onClick={() => {
+              if (user) {
+                router.push('/panchang');
+              } else {
+                onOpenAuth('CLIENT', 'दैनिक पंचांग व शुभ मुहूर्त देखने के लिए कृपया लॉगिन करें।', '/panchang');
+              }
+            }}
+          >
+            <span>✨</span> दैनिक पंचांग
+          </button>
+        </li>
         <li className="nav-item"><Link href="/poojas">Pooja Services</Link></li>
         <li className="nav-item"><Link href="/pandits">Vedic Pandits</Link></li>
         <li className="nav-item"><Link href="/samagri">Pooja Samagri</Link></li>

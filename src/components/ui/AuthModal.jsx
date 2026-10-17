@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function AuthModal({ isOpen, initialRole = 'CLIENT', onClose, onSuccess }) {
+export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '', redirectUrl = '', onClose, onSuccess }) {
   const router = useRouter();
   const { login, register } = useAuth();
 
@@ -26,6 +26,20 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', onClose, onS
   });
 
   if (!isOpen) return null;
+
+  const handleRedirect = (targetRole) => {
+    if (redirectUrl) {
+      router.push(redirectUrl);
+      return;
+    }
+    if (targetRole === 'PANDIT') {
+      router.push('/dashboard/pandit');
+    } else if (targetRole === 'ADMIN') {
+      router.push('/dashboard/admin');
+    } else {
+      router.push('/dashboard/devotee');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,15 +63,7 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', onClose, onS
       setTimeout(() => {
         onClose();
         if (onSuccess) onSuccess(res.user);
-
-        // Redirect directly to corresponding dedicated portal!
-        if (role === 'PANDIT') {
-          router.push('/dashboard/pandit');
-        } else if (role === 'ADMIN') {
-          router.push('/dashboard/admin');
-        } else {
-          router.push('/dashboard/devotee');
-        }
+        handleRedirect(role);
       }, 700);
     } catch (err) {
       setErrorMsg(err.message || 'Something went wrong. Please check your credentials.');
@@ -82,9 +88,7 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', onClose, onS
       setSuccessMsg(`Welcome to ${targetRole} Portal! Redirecting...`);
       setTimeout(() => {
         onClose();
-        if (targetRole === 'PANDIT') router.push('/dashboard/pandit');
-        else if (targetRole === 'ADMIN') router.push('/dashboard/admin');
-        else router.push('/dashboard/devotee');
+        handleRedirect(targetRole);
       }, 500);
     } catch (err) {
       setErrorMsg(err.message || 'Demo login failed');
@@ -99,6 +103,17 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', onClose, onS
         <button type="button" className="modal-close-x" onClick={onClose} aria-label="Close">
           ✕
         </button>
+
+        {/* PROMPT / REASON BANNER (IF GATED FEATURE CLICKED) */}
+        {reason && (
+          <div className="auth-reason-banner">
+            <span className="reason-icon">🕉️</span>
+            <div className="reason-content">
+              <strong>पवित्र वैदिक सुविधा (Devotional Access)</strong>
+              <p>{reason}</p>
+            </div>
+          </div>
+        )}
 
         {/* 3-WAY PORTAL TABS */}
         <div className="auth-role-tabs-three">
