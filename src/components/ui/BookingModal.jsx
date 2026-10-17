@@ -36,7 +36,7 @@ export default function BookingModal({ isOpen, initialPoojaId, initialWithSamagr
 
     try {
       const res = await api.createBooking({
-        clientId: user?.id || 'usr_client_demo',
+        clientId: user?.id || ('usr_devotee_' + Date.now()),
         clientName: name,
         clientPhone: phone,
         clientEmail: email,

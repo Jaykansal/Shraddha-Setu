@@ -28,7 +28,7 @@ export default function DevoteeDashboard() {
   const loadBookings = async () => {
     setLoading(true);
     try {
-      const res = await api.getBookings({ clientId: user?.id || 'usr_client_demo' });
+      const res = await api.getBookings(user?.id ? { clientId: user.id } : {});
       setBookings(res.data || []);
     } catch (e) {
       console.warn('Could not load bookings:', e);

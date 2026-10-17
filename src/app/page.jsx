@@ -94,11 +94,8 @@ export default function HomePage() {
                 className="btn-card-portal btn-devotee"
                 onClick={() => handleOpenAuth('CLIENT')}
               >
-                Open Devotee Portal →
+                Access Devotee Portal →
               </button>
-              <Link href="/dashboard/devotee" className="portal-direct-link">
-                Direct Demo Link
-              </Link>
             </div>
           </div>
 
@@ -124,11 +121,8 @@ export default function HomePage() {
                 className="btn-card-portal btn-pandit"
                 onClick={() => handleOpenAuth('PANDIT')}
               >
-                Open Pandit Portal →
+                Access Acharya Portal →
               </button>
-              <Link href="/dashboard/pandit" className="portal-direct-link">
-                Direct Demo Link
-              </Link>
             </div>
           </div>
 
@@ -154,11 +148,8 @@ export default function HomePage() {
                 className="btn-card-portal btn-admin"
                 onClick={() => handleOpenAuth('ADMIN')}
               >
-                Open Admin Console →
+                Access Admin Console →
               </button>
-              <Link href="/dashboard/admin" className="portal-direct-link">
-                Direct Demo Link
-              </Link>
             </div>
           </div>
         </div>

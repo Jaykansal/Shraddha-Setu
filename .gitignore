@@ -13,3 +13,4 @@ pnpm-debug.log*
 .DS_Store
 backend-go/bin/
 backend-go/server
+.data_store.json

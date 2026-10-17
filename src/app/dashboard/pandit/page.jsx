@@ -36,7 +36,7 @@ export default function PanditDashboard() {
   };
 
   const currentPandit = user || {
-    id: 'usr_pandit_demo',
+    id: 'usr_pandit_108',
     name: 'Acharya Vidyadhar Shastri',
     phone: '+91 98234 56789',
     gurukul: 'Sampurnanand Sanskrit University, Varanasi',

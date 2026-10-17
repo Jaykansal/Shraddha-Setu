@@ -28,14 +28,6 @@ export default function PanchangPage() {
     });
   };
 
-  const handleQuickUnlock = async () => {
-    try {
-      await login('devotee@shraddhasetu.com', 'shree108', 'CLIENT');
-    } catch (e) {
-      handleOpenAuth('CLIENT');
-    }
-  };
-
   return (
     <div className="app-root main-full-layout">
       <TopBar onOpenAuth={handleOpenAuth} />
@@ -148,14 +140,14 @@ export default function PanchangPage() {
                 <button
                   type="button"
                   className="btn-unlock-instant"
-                  onClick={handleQuickUnlock}
+                  onClick={() => handleOpenAuth('CLIENT', 'दैनिक पंचांग व शुभ मुहूर्त देखने के लिए कृपया निःशुल्क पंजीकरण करें')}
                 >
-                  <span>⚡</span> 1-Click Instant Devotee Demo
+                  <span>✨</span> नया भक्त खाता बनाएँ (Free Registration)
                 </button>
               </div>
 
               <p className="lock-note-small">
-                निःशुल्क पंजीकरण • तुरंत एक्सेस • श्रद्धासेतु सुरक्षा गारंटी
+                100% निःशुल्क पंजीकरण • सुरक्षित वैदिक काल गणना • श्रद्धासेतु प्रामाणिकता
               </p>
             </div>
           </div>

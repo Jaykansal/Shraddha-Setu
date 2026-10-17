@@ -4,7 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '', redirectUrl = '', onClose, onSuccess }) {
+export default function AuthModal({
+  isOpen,
+  initialRole = 'CLIENT',
+  reason = '',
+  redirectUrl = '',
+  onClose,
+  onSuccess
+}) {
   const router = useRouter();
   const { login, register } = useAuth();
 
@@ -20,9 +27,9 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
     phone: '',
     password: '',
     city: 'Varanasi',
-    gurukul: 'Sampurnanand Sanskrit University, Varanasi',
-    specialization: 'Navagraha Shanti, Rudrabhishek & Griha Pravesh',
-    experience: 12,
+    gurukul: '',
+    specialization: '',
+    experience: 5,
   });
 
   if (!isOpen) return null;
@@ -64,34 +71,9 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
         onClose();
         if (onSuccess) onSuccess(res.user);
         handleRedirect(role);
-      }, 700);
+      }, 600);
     } catch (err) {
-      setErrorMsg(err.message || 'Something went wrong. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 1-Click Quick Demo Login for instant testing without typing
-  const handleQuickDemo = async (targetRole) => {
-    setLoading(true);
-    setErrorMsg('');
-    setSuccessMsg('');
-    setRole(targetRole);
-
-    let email = 'devotee@shraddhasetu.com';
-    if (targetRole === 'PANDIT') email = 'pandit@shraddhasetu.com';
-    if (targetRole === 'ADMIN') email = 'admin@shraddhasetu.com';
-
-    try {
-      const res = await login(email, 'shree108', targetRole);
-      setSuccessMsg(`Welcome to ${targetRole} Portal! Redirecting...`);
-      setTimeout(() => {
-        onClose();
-        handleRedirect(targetRole);
-      }, 500);
-    } catch (err) {
-      setErrorMsg(err.message || 'Demo login failed');
+      setErrorMsg(err.message || 'Authentication failed. Please verify your details.');
     } finally {
       setLoading(false);
     }
@@ -104,30 +86,30 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
           ✕
         </button>
 
-        {/* PROMPT / REASON BANNER (IF GATED FEATURE CLICKED) */}
+        {/* PROMPT BANNER FOR GATED FEATURES */}
         {reason && (
           <div className="auth-reason-banner">
             <span className="reason-icon">🕉️</span>
             <div className="reason-content">
-              <strong>पवित्र वैदिक सुविधा (Devotional Access)</strong>
+              <strong>पवित्र वैदिक सुविधा (Protected Vedic Feature)</strong>
               <p>{reason}</p>
             </div>
           </div>
         )}
 
-        {/* 3-WAY PORTAL TABS */}
+        {/* 3-WAY SEGMENTED ROLE SELECTOR */}
         <div className="auth-role-tabs-three">
           <button
             type="button"
             className={`auth-role-tab ${role === 'CLIENT' ? 'active-client' : ''}`}
-            onClick={() => { setRole('CLIENT'); setErrorMsg(''); setIsRegister(false); }}
+            onClick={() => { setRole('CLIENT'); setErrorMsg(''); }}
           >
             <span>🙏</span> Devotee / Yajman
           </button>
           <button
             type="button"
             className={`auth-role-tab ${role === 'PANDIT' ? 'active-pandit' : ''}`}
-            onClick={() => { setRole('PANDIT'); setErrorMsg(''); setIsRegister(false); }}
+            onClick={() => { setRole('PANDIT'); setErrorMsg(''); }}
           >
             <span>🕉️</span> Pandit Ji / Acharya
           </button>
@@ -140,63 +122,52 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
           </button>
         </div>
 
-        {/* HEADER */}
+        {/* ROLE CONTEXT HEADER */}
         <div className="auth-header">
           <h3>
-            {role === 'CLIENT' && 'Devotee / Yajman Portal'}
-            {role === 'PANDIT' && 'Vedic Pandit & Acharya Portal'}
-            {role === 'ADMIN' && 'Mandir Samiti & Platform Admin'}
+            {role === 'CLIENT' && (isRegister ? 'Register as Devotee / Yajman' : 'Devotee Sign In')}
+            {role === 'PANDIT' && (isRegister ? 'Vedic Pandit Acharya Registration' : 'Pandit Ji Sign In')}
+            {role === 'ADMIN' && 'Mandir Samiti Admin Console'}
           </h3>
           <p>
-            {role === 'CLIENT' && 'Book pujas at home, choose with/without samagri, track assigned pandit & live muhurat.'}
-            {role === 'PANDIT' && 'Accept local puja requests, schedule Vedic muhurats, and manage Dakshina payouts.'}
-            {role === 'ADMIN' && 'Approve verified Gurukul pandits, manage nationwide ceremonies, and monitor platform activity.'}
+            {role === 'CLIENT' && 'Book pujas, consult assigned Acharya, choose Pure Samagri Kit, and view Daily Panchang.'}
+            {role === 'PANDIT' && 'Accept local puja requests, confirm muhurat, and manage your Dakshina payouts.'}
+            {role === 'ADMIN' && 'Authorized personnel only: Pandit verification desk & nationwide operations monitor.'}
           </p>
         </div>
 
-        {/* QUICK DEMO BUTTONS */}
-        <div className="quick-demo-banner">
-          <span className="demo-label">⚡ Quick 1-Click Access:</span>
-          <div className="demo-btns-row">
+        {/* SIGN IN VS REGISTER TOGGLE (NOT FOR ADMIN) */}
+        {role !== 'ADMIN' && (
+          <div className="auth-mode-switch">
             <button
               type="button"
-              className="demo-btn demo-btn-devotee"
-              onClick={() => handleQuickDemo('CLIENT')}
-              disabled={loading}
+              className={`mode-btn ${!isRegister ? 'active' : ''}`}
+              onClick={() => { setIsRegister(false); setErrorMsg(''); }}
             >
-              Demo Devotee
+              Sign In (लॉगिन)
             </button>
             <button
               type="button"
-              className="demo-btn demo-btn-pandit"
-              onClick={() => handleQuickDemo('PANDIT')}
-              disabled={loading}
+              className={`mode-btn ${isRegister ? 'active' : ''}`}
+              onClick={() => { setIsRegister(true); setErrorMsg(''); }}
             >
-              Demo Pandit Ji
-            </button>
-            <button
-              type="button"
-              className="demo-btn demo-btn-admin"
-              onClick={() => handleQuickDemo('ADMIN')}
-              disabled={loading}
-            >
-              Demo Admin
+              Create Account (नया खाता बनाएँ)
             </button>
           </div>
-        </div>
+        )}
 
         {errorMsg && <div className="auth-alert error-alert">{errorMsg}</div>}
         {successMsg && <div className="auth-alert success-alert">{successMsg}</div>}
 
-        {/* FORM */}
+        {/* REAL AUTHENTICATION FORM */}
         <form onSubmit={handleSubmit} className="auth-form">
           {isRegister && (
             <div className="form-group">
-              <label>Full Name *</label>
+              <label>Full Name (पूरा नाम) *</label>
               <input
                 type="text"
                 required
-                placeholder={role === 'PANDIT' ? 'Pt. Acharya Ramendra Sharma' : 'Rameshwar Devotee'}
+                placeholder={role === 'PANDIT' ? 'Acharya Vidyadhar Shastri' : 'Rameshwar Devotee'}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
@@ -204,7 +175,7 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
           )}
 
           <div className="form-group">
-            <label>Email Address *</label>
+            <label>Email Address (ईमेल) *</label>
             <input
               type="email"
               required
@@ -216,7 +187,7 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
 
           {isRegister && (
             <div className="form-group">
-              <label>WhatsApp / Mobile Number *</label>
+              <label>Mobile Number (मोबाइल / WhatsApp नंबर) *</label>
               <input
                 type="tel"
                 required
@@ -228,101 +199,84 @@ export default function AuthModal({ isOpen, initialRole = 'CLIENT', reason = '',
           )}
 
           <div className="form-group">
-            <label>Password *</label>
+            <label>Password (पासवर्ड) *</label>
             <input
               type="password"
               required
               placeholder="••••••••"
+              minLength={6}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
           </div>
 
           {isRegister && (
-            <div className="form-group">
-              <label>Operating City / Location *</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Varanasi, Delhi NCR, Mumbai"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-              />
-            </div>
-          )}
-
-          {/* PANDIT SPECIAL FIELDS ON REGISTRATION */}
-          {isRegister && role === 'PANDIT' && (
             <>
               <div className="form-group">
-                <label>Gurukul / Veda Vidyapeeth Lineage *</label>
+                <label>City / Location (नगर / शहर) *</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Sampurnanand Sanskrit University, Varanasi"
-                  value={formData.gurukul}
-                  onChange={(e) => setFormData({ ...formData, gurukul: e.target.value })}
+                  placeholder="Varanasi, Delhi, Mumbai, Ayodhya, Haridwar..."
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                 />
               </div>
 
-              <div className="form-group">
-                <label>Vedic Specialization & Shastra</label>
-                <select
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-                >
-                  <option value="Navagraha Shanti, Rudrabhishek & Griha Pravesh">Navagraha Shanti, Rudrabhishek & Griha Pravesh</option>
-                  <option value="Karmakand, Havan & Vedic Anushthan">Karmakand, Havan & Vedic Anushthan</option>
-                  <option value="Maha Mrityunjaya Jaap & Vastu Shanti">Maha Mrityunjaya Jaap & Vastu Shanti</option>
-                  <option value="Satyanarayan Katha & Chandi Path">Satyanarayan Katha & Chandi Path</option>
-                  <option value="Vivah Sanskar & Ayush Havan">Vivah Sanskar & Ayush Havan</option>
-                </select>
-              </div>
+              {role === 'PANDIT' && (
+                <>
+                  <div className="form-group">
+                    <label>Vedic Gurukul / Vidyapeeth (गुरुकुल / वेद विद्यालय) *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Sampurnanand Sanskrit University, Kashi Math..."
+                      value={formData.gurukul}
+                      onChange={(e) => setFormData({ ...formData, gurukul: e.target.value })}
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label>Experience (Years of Karmakand Practice)</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formData.experience}
-                  onChange={(e) => setFormData({ ...formData, experience: Number(e.target.value) })}
-                />
-              </div>
+                  <div className="form-group">
+                    <label>Vedic Specialization (विशेषज्ञता) *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Navagraha Shanti, Rudrabhishek, Griha Pravesh, Havan"
+                      value={formData.specialization}
+                      onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Years of Shastra Experience (अनुभव वर्ष) *</label>
+                    <input
+                      type="number"
+                      required
+                      min={1}
+                      max={60}
+                      value={formData.experience}
+                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
 
-          <button
-            type="submit"
-            className={`btn-auth-submit btn-portal-${role.toLowerCase()}`}
-            disabled={loading}
-          >
-            {loading ? 'Verifying Sacred Access...' : (
-              isRegister
-                ? (role === 'PANDIT' ? 'Register as Certified Pandit' : 'Create Devotee Account')
-                : `Login to ${role === 'CLIENT' ? 'Devotee' : (role === 'PANDIT' ? 'Pandit' : 'Admin')} Portal`
-            )}
+          <button type="submit" className="btn-auth-submit" disabled={loading}>
+            {loading ? 'Verifying Credentials...' : (isRegister ? 'Complete Registration' : 'Sign In to Portal')}
           </button>
         </form>
 
-        {role !== 'ADMIN' && (
-          <div className="auth-footer-toggle">
-            {isRegister ? (
-              <p>
-                Already have an account?{' '}
-                <button type="button" onClick={() => setIsRegister(false)}>
-                  Sign In
-                </button>
-              </p>
-            ) : (
-              <p>
-                New to ShraddhaSetu?{' '}
-                <button type="button" onClick={() => setIsRegister(true)}>
-                  {role === 'PANDIT' ? 'Join as Vedic Pandit' : 'Create Free Account'}
-                </button>
-              </p>
-            )}
+        {/* DEFAULT ACCOUNTS HINT FOR VERIFICATION */}
+        <div className="auth-account-hint">
+          <span className="hint-label">Pre-seeded Accounts (Password: <code>password123</code>):</span>
+          <div className="hint-grid">
+            <span>Devotee: <code>devotee@shraddhasetu.com</code></span>
+            <span>Pandit: <code>pandit@shraddhasetu.com</code></span>
+            <span>Admin: <code>admin@shraddhasetu.com</code></span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

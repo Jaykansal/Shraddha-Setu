@@ -88,7 +88,7 @@ export default function PanchangWidget({ onOpenAuth }) {
               </button>
               {!user && (
                 <span className="hint-lock-text">
-                  * 1-क्लिक में लॉगिन करके सम्पूर्ण पंचांग तुरंत देखें
+                  * पंजीकृत यजमानों हेतु पूर्ण निःशुल्क एवं प्रामाणिक काल-गणना
                 </span>
               )}
             </div>

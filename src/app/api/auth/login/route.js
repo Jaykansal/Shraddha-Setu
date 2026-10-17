@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { serverStore } from '@/lib/serverStore';
 
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { email, password, requestedRole = 'CLIENT' } = body;
+    const { email, password, requestedRole } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -12,36 +13,43 @@ export async function POST(request) {
       );
     }
 
-    const cleanRole = requestedRole.toUpperCase();
-    let name = 'Devotee';
-    if (cleanRole === 'PANDIT') {
-      name = 'Acharya Vidyadhar Shastri';
-    } else if (cleanRole === 'ADMIN') {
-      name = 'Mandir Samiti Admin';
-    } else {
-      name = email.split('@')[0] || 'Rameshwar Devotee';
+    const cleanEmail = email.trim().toLowerCase();
+    const user = serverStore.findUserByEmail(cleanEmail);
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: 'No registered account found with this email. Please register first.' },
+        { status: 404 }
+      );
     }
 
-    const user = {
-      id: 'usr_' + cleanRole.toLowerCase() + '_demo',
-      name: name,
-      email: email,
-      phone: '+91 98765 43210',
-      role: cleanRole,
-      city: 'Varanasi',
-      gurukul: cleanRole === 'PANDIT' ? 'Sampurnanand Sanskrit University, Varanasi' : '',
-      vedicSpecialization: cleanRole === 'PANDIT' ? 'Navagraha Shanti, Rudrabhishek & Griha Pravesh' : '',
-      experienceYears: cleanRole === 'PANDIT' ? 18 : 0,
-      isVerified: true,
-      rating: 4.95,
-      poojasConducted: 1420
-    };
+    // Password verification
+    if (user.password && user.password !== password) {
+      return NextResponse.json(
+        { success: false, message: 'Incorrect password. Please verify and try again.' },
+        { status: 401 }
+      );
+    }
+
+    // Role verification
+    if (requestedRole && user.role.toUpperCase() !== requestedRole.toUpperCase()) {
+      const portalName = user.role === 'PANDIT' ? 'Pandit / Acharya' : (user.role === 'ADMIN' ? 'Mandir Admin' : 'Devotee');
+      return NextResponse.json(
+        {
+          success: false,
+          message: `This account is registered under the ${portalName} role. Please switch to the ${portalName} tab to sign in.`
+        },
+        { status: 403 }
+      );
+    }
+
+    const { password: _, ...safeUser } = user;
 
     return NextResponse.json({
       success: true,
-      message: `Welcome back, ${user.name}! Accessing ${cleanRole} Portal.`,
-      token: 'jwt_' + cleanRole + '_' + Date.now(),
-      user,
+      message: `Namaste, ${safeUser.name}! Successfully signed in.`,
+      token: `jwt_${safeUser.role}_${Date.now()}`,
+      user: safeUser,
     });
   } catch (err) {
     return NextResponse.json(
