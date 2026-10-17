@@ -1,8 +1,25 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TopBar({ onOpenAuth }) {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handlePortalClick = (targetRole, path) => {
+    if (user && user.role === targetRole) {
+      router.push(path);
+    } else {
+      const roleName = targetRole === 'PANDIT' ? 'Vedic Pandit' : (targetRole === 'ADMIN' ? 'Mandir Admin' : 'Devotee');
+      if (onOpenAuth) {
+        onOpenAuth(targetRole, `Please sign in to access the ${roleName} portal.`, path);
+      } else {
+        router.push(path);
+      }
+    }
+  };
+
   return (
     <div className="top-bar">
       <div className="top-bar-left">
@@ -17,15 +34,30 @@ export default function TopBar({ onOpenAuth }) {
         </div>
 
         <div className="portal-quick-links">
-          <Link href="/dashboard/devotee" className="portal-pill pill-devotee" title="Yajman Devotee Portal">
+          <button
+            type="button"
+            className="portal-pill pill-devotee"
+            onClick={() => handlePortalClick('CLIENT', '/dashboard/devotee')}
+            title="Yajman Devotee Portal"
+          >
             🙏 Devotee
-          </Link>
-          <Link href="/dashboard/pandit" className="portal-pill pill-pandit" title="Vedic Acharya Portal">
+          </button>
+          <button
+            type="button"
+            className="portal-pill pill-pandit"
+            onClick={() => handlePortalClick('PANDIT', '/dashboard/pandit')}
+            title="Vedic Acharya Portal"
+          >
             🕉️ Pandit Ji
-          </Link>
-          <Link href="/dashboard/admin" className="portal-pill pill-admin" title="Mandir Samiti Admin Console">
+          </button>
+          <button
+            type="button"
+            className="portal-pill pill-admin"
+            onClick={() => handlePortalClick('ADMIN', '/dashboard/admin')}
+            title="Mandir Samiti Admin Console"
+          >
             🏛️ Admin
-          </Link>
+          </button>
         </div>
       </div>
     </div>

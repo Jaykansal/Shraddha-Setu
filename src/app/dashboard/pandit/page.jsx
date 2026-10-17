@@ -12,7 +12,7 @@ import AuthModal from '@/components/ui/AuthModal';
 
 export default function PanditDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('incoming'); // 'incoming', 'scheduled', 'earnings', 'profile'
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,9 @@ export default function PanditDashboard() {
   const [isAvailable, setIsAvailable] = useState(true);
 
   useEffect(() => {
-    loadPanditBookings();
+    if (user && user.role === 'PANDIT') {
+      loadPanditBookings();
+    }
   }, [user]);
 
   const loadPanditBookings = async () => {
@@ -35,18 +37,71 @@ export default function PanditDashboard() {
     }
   };
 
-  const currentPandit = user || {
-    id: 'usr_pandit_108',
-    name: 'Acharya Vidyadhar Shastri',
-    phone: '+91 98234 56789',
-    gurukul: 'Sampurnanand Sanskrit University, Varanasi',
-    vedicSpecialization: 'Navagraha Shanti, Rudrabhishek & Griha Pravesh',
-    experienceYears: 18,
-    rating: 4.95,
-    poojasConducted: 1420,
-    city: 'Varanasi',
-    isVerified: true,
-  };
+  // 1. AUTH LOADING STATE
+  if (authLoading) {
+    return (
+      <div className="portal-page pandit-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
+        <main className="portal-main-container">
+          <div className="portal-loading-box">
+            <span className="portal-spinner">🕉️</span>
+            <p>Verifying Pandit Credentials...</p>
+          </div>
+        </main>
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+      </div>
+    );
+  }
+
+  // 2. UNAUTHENTICATED OR NON-PANDIT ACCESS GATE
+  if (!user || user.role !== 'PANDIT') {
+    return (
+      <div className="portal-page pandit-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
+
+        <main className="portal-main-container">
+          <div className="portal-lock-wrapper">
+            <div className="portal-auth-card">
+              <div className="auth-icon-circle">🕉️</div>
+              <h2>Vedic Pandit / Acharya Portal</h2>
+              <p className="auth-card-subtitle">
+                {user
+                  ? `You are currently signed in as "${user.name}" (${user.role}). This portal is exclusively for verified Vedic Pandits & Acharyas.`
+                  : 'Please sign in to access your Acharya Portal, accept puja booking requests in your city, and manage your Dakshina ledger.'}
+              </p>
+
+              <div className="auth-card-actions">
+                <button
+                  type="button"
+                  className="btn-portal-primary-auth"
+                  onClick={() => setAuthModalOpen(true)}
+                >
+                  <span>🔐</span> {user ? 'Switch to Pandit Account' : 'Sign In as Pandit Ji'}
+                </button>
+                <Link href="/" className="btn-portal-back-home">
+                  ← Return to Homepage
+                </Link>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+
+        <AuthModal
+          isOpen={authModalOpen}
+          initialRole="PANDIT"
+          redirectUrl="/dashboard/pandit"
+          onClose={() => setAuthModalOpen(false)}
+        />
+      </div>
+    );
+  }
+
+  // 3. AUTHENTICATED PANDIT EXPERIENCE
+  const currentPandit = user;
 
   // Filter incoming unassigned bookings vs pandit's own scheduled bookings
   const incomingRequests = bookings.filter(b => b.status === 'CONFIRMED' && !b.assignedPanditId);
@@ -79,33 +134,34 @@ export default function PanditDashboard() {
   return (
     <div className="portal-page pandit-portal-theme">
       <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
-      <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => {}} />
+      <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
 
       <main className="portal-main-container">
-        {/* ACHARYA VEDIC HEADER BANNER */}
+        {/* PANDIT HEADER PROFILE BANNER */}
         <section className="portal-banner-card pandit-banner">
           <div className="banner-left">
-            <div className="acharya-title-flex">
-              <span className="role-tag-pill saffron-tag">🕉️ Acharya Portal</span>
-              <span className="gurukul-verified-badge">✓ Gurukul Certified Scholar</span>
+            <div className="pandit-title-row">
+              <span className="role-tag-pill pandit-pill">🕉️ Acharya Portal</span>
+              {currentPandit.isVerified ? (
+                <span className="badge-verified">✓ Gurukul Certified Scholar</span>
+              ) : (
+                <span className="badge-pending">⏳ Verification Pending Admin Review</span>
+              )}
             </div>
             <h2>{currentPandit.name}</h2>
-            <p className="acharya-credentials">
-              🏛️ <strong>{currentPandit.gurukul || 'Sampurnanand Sanskrit Vishwavidyalaya, Kashi'}</strong>
-              <br />
-              📜 Specialization: <strong>{currentPandit.vedicSpecialization || 'Karmakand & Havan'}</strong> • {currentPandit.experienceYears || 18}+ Years Practice
-            </p>
+            <p>🏛️ {currentPandit.gurukul || 'Sampurnanand Sanskrit University, Varanasi'}</p>
+            <p>📜 Specialization: <strong>{currentPandit.vedicSpecialization || 'Karmakand & Vedic Anushthan'}</strong> • {currentPandit.experienceYears || 10}+ Years Practice</p>
           </div>
 
-          <div className="banner-right-actions">
-            <div className="availability-toggle-box">
-              <span className="avail-label">Current Status:</span>
+          <div className="banner-right-status">
+            <div className="status-toggle-box">
+              <span className="status-label">Current Status:</span>
               <button
                 type="button"
-                className={`btn-avail-toggle ${isAvailable ? 'status-online' : 'status-offline'}`}
+                className={`btn-availability ${isAvailable ? 'available' : 'unavailable'}`}
                 onClick={() => setIsAvailable(!isAvailable)}
               >
-                {isAvailable ? '● Available for Muhurats' : '○ Busy in Temple Duty'}
+                {isAvailable ? '● Available for Muhurats' : '○ Busy / Off Duty'}
               </button>
             </div>
             <button
@@ -118,30 +174,30 @@ export default function PanditDashboard() {
           </div>
         </section>
 
-        {/* PANDIT METRICS */}
+        {/* METRICS ROW */}
         <div className="portal-metrics-grid">
-          <div className="metric-card metric-saffron">
+          <div className="metric-card">
             <span className="metric-icon">⭐</span>
             <div className="metric-data">
-              <strong>{currentPandit.rating || 4.95} / 5.0</strong>
-              <span>Devotee Rating ({currentPandit.poojasConducted || 1420}+ Pujas)</span>
+              <strong>{currentPandit.rating || 5.0} / 5.0</strong>
+              <span>Devotee Rating ({currentPandit.poojasConducted || 0}+ Pujas)</span>
             </div>
           </div>
-          <div className="metric-card metric-saffron">
+          <div className="metric-card">
             <span className="metric-icon">🔔</span>
             <div className="metric-data">
               <strong>{incomingRequests.length} Requests</strong>
               <span>Available in Your Region</span>
             </div>
           </div>
-          <div className="metric-card metric-saffron">
+          <div className="metric-card">
             <span className="metric-icon">📅</span>
             <div className="metric-data">
               <strong>{scheduledPujas.length} Scheduled</strong>
               <span>Upcoming Muhurats</span>
             </div>
           </div>
-          <div className="metric-card metric-saffron">
+          <div className="metric-card">
             <span className="metric-icon">💰</span>
             <div className="metric-data">
               <strong>₹{totalEarned.toLocaleString('en-IN')}</strong>
@@ -154,35 +210,35 @@ export default function PanditDashboard() {
         <div className="portal-tabs-nav">
           <button
             type="button"
-            className={`portal-tab-btn tab-saffron ${activeTab === 'incoming' ? 'active' : ''}`}
+            className={`portal-tab-btn ${activeTab === 'incoming' ? 'active' : ''}`}
             onClick={() => setActiveTab('incoming')}
           >
             🔔 Available Requests in City ({incomingRequests.length})
           </button>
           <button
             type="button"
-            className={`portal-tab-btn tab-saffron ${activeTab === 'scheduled' ? 'active' : ''}`}
+            className={`portal-tab-btn ${activeTab === 'scheduled' ? 'active' : ''}`}
             onClick={() => setActiveTab('scheduled')}
           >
             📅 My Scheduled Ceremonies ({scheduledPujas.length})
           </button>
           <button
             type="button"
-            className={`portal-tab-btn tab-saffron ${activeTab === 'earnings' ? 'active' : ''}`}
+            className={`portal-tab-btn ${activeTab === 'earnings' ? 'active' : ''}`}
             onClick={() => setActiveTab('earnings')}
           >
             🪙 Dakshina &amp; Payouts
           </button>
           <button
             type="button"
-            className={`portal-tab-btn tab-saffron ${activeTab === 'profile' ? 'active' : ''}`}
+            className={`portal-tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
             onClick={() => setActiveTab('profile')}
           >
             📜 Gurukul Credentials
           </button>
         </div>
 
-        {/* TAB 1: INCOMING REQUESTS TO ACCEPT */}
+        {/* TAB 1: INCOMING REQUESTS */}
         {activeTab === 'incoming' && (
           <section className="portal-tab-content">
             <div className="tab-header-flex">
@@ -190,73 +246,68 @@ export default function PanditDashboard() {
                 <h3>Unassigned Puja Requests in Your Region</h3>
                 <p className="tab-desc">Review ceremony requirements, date, and Dakshina. Click "Accept &amp; Lock Muhurat" to take charge.</p>
               </div>
-              <button type="button" className="btn-refresh-sm" onClick={loadPanditBookings}>
+              <button type="button" className="btn-refresh" onClick={loadPanditBookings}>
                 🔄 Refresh List
               </button>
             </div>
 
             {loading ? (
-              <div className="portal-loading-box">Checking sacred requests...</div>
+              <div className="tab-loading">Checking for local puja requests...</div>
             ) : incomingRequests.length === 0 ? (
-              <div className="portal-empty-box">
-                <span style={{ fontSize: '40px' }}>🚩</span>
+              <div className="empty-tab-state">
+                <span className="empty-icon">🚩</span>
                 <h4>All Current Muhurats are Assigned</h4>
                 <p>New booking requests from devotees in your city will appear here in real-time.</p>
               </div>
             ) : (
-              <div className="bookings-cards-list">
+              <div className="incoming-requests-list">
                 {incomingRequests.map((req) => (
-                  <div key={req.id} className="pandit-booking-card request-card">
-                    <div className="bkg-top-row">
-                      <div>
-                        <span className="bkg-code-badge">{req.bookingCode}</span>
-                        <h4 className="bkg-pooja-title">{req.poojaTitle}</h4>
-                        <span className="bkg-occasion-sub">{req.occasion || 'Devotional Puja'}</span>
+                  <div key={req.id} className="request-card-pandit">
+                    <div className="request-top-info">
+                      <div className="pooja-title-wrap">
+                        <span className="badge-new-request">New Booking</span>
+                        <h4>{req.poojaTitle}</h4>
+                        <span className="req-booking-code">{req.bookingCode}</span>
                       </div>
-                      <div className="bkg-price-highlight">
-                        <span className="dakshina-label">Base Dakshina</span>
-                        <strong className="dakshina-val">₹{req.basePrice?.toLocaleString('en-IN')}</strong>
-                      </div>
-                    </div>
-
-                    <div className="booking-meta-grid">
-                      <div className="meta-item">
-                        <strong>📅 Muhurat Date:</strong>
-                        <span>{req.bookingDate}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>⏰ Time Slot:</strong>
-                        <span>{req.timeSlot}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>📍 Devotee Location:</strong>
-                        <span>{req.city}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>📦 Samagri Status:</strong>
-                        <span className={req.withSamagri ? 'highlight-with-samagri' : 'highlight-pandit-only'}>
-                          {req.withSamagri ? 'With Pure Samagri Kit (Delivered by ShraddhaSetu)' : 'Devotee Arranging Samagri (Pandit Dakshina Only)'}
-                        </span>
+                      <div className="req-dakshina-box">
+                        <span className="dakshina-label">Pandit Dakshina:</span>
+                        <strong className="dakshina-amount">₹{req.basePrice || 1500}</strong>
+                        {req.withSamagri && <span className="samagri-provided-tag">✓ Samagri Kit Included</span>}
                       </div>
                     </div>
 
-                    <div className="client-contact-card">
-                      <div className="client-info">
-                        <strong>Devotee (Yajman): {req.clientName}</strong>
-                        <span>Phone: {req.clientPhone}</span>
+                    <div className="request-details-grid">
+                      <div className="detail-item">
+                        <span className="lbl">Devotee / Yajman:</span>
+                        <strong>{req.clientName}</strong>
                       </div>
-                      {req.specialNotes && (
-                        <p className="client-notes"><strong>Sankalp Note:</strong> {req.specialNotes}</p>
-                      )}
+                      <div className="detail-item">
+                        <span className="lbl">Auspicious Date:</span>
+                        <strong>{req.bookingDate}</strong>
+                      </div>
+                      <div className="detail-item">
+                        <span className="lbl">Preferred Muhurat:</span>
+                        <strong>{req.timeSlot}</strong>
+                      </div>
+                      <div className="detail-item">
+                        <span className="lbl">Location / City:</span>
+                        <strong>{req.city}</strong>
+                      </div>
                     </div>
 
-                    <div className="pandit-action-footer">
+                    {req.specialNotes && (
+                      <div className="req-special-notes">
+                        <span>Sankalp Notes:</span> {req.specialNotes}
+                      </div>
+                    )}
+
+                    <div className="request-action-row">
                       <button
                         type="button"
-                        className="btn-accept-puja"
+                        className="btn-accept-muhurat"
                         onClick={() => handleAcceptPuja(req.id)}
                       >
-                        ✓ Accept &amp; Lock Muhurat
+                        <span>✓</span> Accept &amp; Lock Muhurat
                       </button>
                     </div>
                   </div>
@@ -266,79 +317,59 @@ export default function PanditDashboard() {
           </section>
         )}
 
-        {/* TAB 2: MY SCHEDULED PUJAS */}
+        {/* TAB 2: SCHEDULED CEREMONIES */}
         {activeTab === 'scheduled' && (
           <section className="portal-tab-content">
             <div className="tab-header-flex">
               <div>
-                <h3>My Scheduled Pujas &amp; Anushthans</h3>
-                <p className="tab-desc">Pujas assigned to you. Call devotee prior to ceremony for Gotra confirmation.</p>
+                <h3>Your Active &amp; Scheduled Ceremonies ({scheduledPujas.length})</h3>
+                <p className="tab-desc">Contact the Yajman to confirm Gotra and mark completed after Purnaahuti.</p>
               </div>
             </div>
 
             {scheduledPujas.length === 0 ? (
-              <div className="portal-empty-box">
-                <span style={{ fontSize: '40px' }}>🕉️</span>
-                <h4>No Scheduled Pujas</h4>
-                <p>Accept an incoming request from the first tab to lock your calendar.</p>
+              <div className="empty-tab-state">
+                <span className="empty-icon">📅</span>
+                <h4>No Ceremonies Scheduled Currently</h4>
+                <p>Accept booking requests from the "Available Requests" tab to view them here.</p>
               </div>
             ) : (
-              <div className="bookings-cards-list">
+              <div className="scheduled-pujas-grid">
                 {scheduledPujas.map((item) => (
-                  <div key={item.id} className="pandit-booking-card scheduled-card">
-                    <div className="bkg-top-row">
+                  <div key={item.id} className="scheduled-card">
+                    <div className="sched-header">
                       <div>
-                        <span className="status-pill pill-assigned">Confirmed with You</span>
-                        <h4 className="bkg-pooja-title">{item.poojaTitle}</h4>
-                        <span className="bkg-occasion-sub">{item.occasion} • Code: {item.bookingCode}</span>
+                        <span className="sched-badge">Status: {item.status}</span>
+                        <h4>{item.poojaTitle}</h4>
+                        <span className="sched-code">{item.bookingCode}</span>
                       </div>
-                      <div className="bkg-price-highlight">
-                        <span className="dakshina-label">Your Dakshina</span>
-                        <strong className="dakshina-val">₹{item.basePrice?.toLocaleString('en-IN')}</strong>
-                      </div>
+                      <span className="sched-amount">₹{item.basePrice || 1500} Dakshina</span>
                     </div>
 
-                    <div className="booking-meta-grid">
-                      <div className="meta-item">
-                        <strong>📅 Muhurat Date:</strong>
-                        <span>{item.bookingDate}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>⏰ Time Slot:</strong>
-                        <span>{item.timeSlot}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>📍 Address &amp; City:</strong>
-                        <span>{item.city}</span>
-                      </div>
-                      <div className="meta-item">
-                        <strong>📦 Samagri Handling:</strong>
-                        <span>{item.withSamagri ? 'Platform Dispatching Kit' : 'Devotee Preparing via Checklist'}</span>
-                      </div>
+                    <div className="sched-meta">
+                      <p><strong>Yajman:</strong> {item.clientName} ({item.clientPhone})</p>
+                      <p><strong>Muhurat:</strong> {item.bookingDate} • {item.timeSlot}</p>
+                      <p><strong>City:</strong> {item.city}</p>
                     </div>
 
-                    <div className="client-contact-card">
-                      <div className="client-info">
-                        <strong>Yajman: {item.clientName}</strong>
-                        <span>Phone: {item.clientPhone}</span>
-                      </div>
-                      <div className="pandit-contact-actions">
-                        <a href={`tel:${item.clientPhone}`} className="btn-call-pandit">
-                          📞 Call Yajman
-                        </a>
-                        <a href={`https://wa.me/${item.clientPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="btn-wa-pandit">
-                          💬 WhatsApp
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="pandit-action-footer">
+                    <div className="sched-actions-row">
+                      <a href={`tel:${item.clientPhone}`} className="btn-call-yajman">
+                        📞 Call Yajman
+                      </a>
+                      <a
+                        href={`https://wa.me/${item.clientPhone?.replace(/[^0-9]/g, '')}?text=Hari%20Om%20${encodeURIComponent(item.clientName)}%20Ji,%20I%20am%20Pt.%20${encodeURIComponent(currentPandit.name)}%20for%20your%20${encodeURIComponent(item.poojaTitle)}.`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-whatsapp-yajman"
+                      >
+                        💬 WhatsApp
+                      </a>
                       <button
                         type="button"
-                        className="btn-mark-completed"
+                        className="btn-purnaahuti"
                         onClick={() => handleMarkCompleted(item.id)}
                       >
-                        🔥 Mark Ritual as Completed (Purnaahuti)
+                        🕉️ Mark Completed (Purnaahuti)
                       </button>
                     </div>
                   </div>
@@ -351,78 +382,75 @@ export default function PanditDashboard() {
         {/* TAB 3: DAKSHINA & EARNINGS */}
         {activeTab === 'earnings' && (
           <section className="portal-tab-content">
-            <h3>Dakshina &amp; Payout Summary</h3>
-            <p className="tab-desc">Direct bank transfers are processed every Monday following completed rituals.</p>
+            <h3>Dakshina Account &amp; Weekly Payout Ledger</h3>
+            <p className="tab-desc">Direct bank transfers are processed every Monday with 0% platform commission deductions.</p>
 
-            <div className="earnings-summary-grid">
-              <div className="earning-stat-box">
+            <div className="earnings-summary-cards">
+              <div className="earn-card">
+                <span>Available for Transfer</span>
+                <strong>₹{((scheduledPujas.length * 1500) + (completedPujas.length * 1800)).toLocaleString('en-IN')}</strong>
+                <small>Next cycle: Monday 10:00 AM</small>
+              </div>
+              <div className="earn-card">
                 <span>Lifetime Dakshina</span>
                 <strong>₹{totalEarned.toLocaleString('en-IN')}</strong>
-                <small>100% Direct Dakshina Honorarium</small>
+                <small>100% Direct Yajman Dakshina</small>
               </div>
-              <div className="earning-stat-box">
-                <span>Next Weekly Payout</span>
-                <strong style={{ color: '#10B981' }}>₹{(scheduledPujas.length * 1500).toLocaleString('en-IN')}</strong>
-                <small>To Bank: State Bank of India (***4128)</small>
-              </div>
-              <div className="earning-stat-box">
-                <span>Completed Anushthans</span>
-                <strong>{currentPandit.poojasConducted || 1420} Ceremonies</strong>
-                <small>Verified by Devotee Reviews</small>
+              <div className="earn-card">
+                <span>Direct Bank Account</span>
+                <strong>HDFC Bank **** 4812</strong>
+                <small>IFSC: HDFC0001242 (Verified)</small>
               </div>
             </div>
           </section>
         )}
 
-        {/* TAB 4: GURUKUL CREDENTIALS */}
+        {/* TAB 4: PROFILE */}
         {activeTab === 'profile' && (
           <section className="portal-tab-content">
-            <h3>Vedic Lineage &amp; Certified Credentials</h3>
-            <p className="tab-desc">Credentials verified by the ShraddhaSetu Vidwat Parishad.</p>
+            <h3>Acharya Gurukul Credentials &amp; Shastra Degrees</h3>
+            <p className="tab-desc">Your Gurukul certification is publicly visible to devotees during booking.</p>
 
-            <div className="profile-details-form">
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>Acharya Full Name</label>
-                  <input type="text" readOnly value={currentPandit.name} />
-                </div>
-                <div className="form-group">
-                  <label>Veda Vidyapeeth / Gurukul</label>
-                  <input type="text" readOnly value={currentPandit.gurukul || 'Sampurnanand Sanskrit University, Varanasi'} />
-                </div>
+            <div className="profile-credentials-box">
+              <div className="cred-row">
+                <span className="cred-label">Vedic Name:</span>
+                <strong>{currentPandit.name}</strong>
               </div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>Shastra Specialization</label>
-                  <input type="text" readOnly value={currentPandit.vedicSpecialization || 'Navagraha Shanti & Griha Pravesh'} />
-                </div>
-                <div className="form-group">
-                  <label>Veda Shakha</label>
-                  <input type="text" readOnly value="Shukla Yajurveda (Madhyandina Shakha)" />
-                </div>
+              <div className="cred-row">
+                <span className="cred-label">Registered Phone:</span>
+                <strong>{currentPandit.phone}</strong>
               </div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>Years of Practice</label>
-                  <input type="text" readOnly value={`${currentPandit.experienceYears || 18} Years`} />
-                </div>
-                <div className="form-group">
-                  <label>Verification Status</label>
-                  <input type="text" readOnly value="✓ Verified by Acharya Parishad" style={{ color: '#059669', fontWeight: 'bold' }} />
-                </div>
+              <div className="cred-row">
+                <span className="cred-label">Email:</span>
+                <strong>{currentPandit.email}</strong>
+              </div>
+              <div className="cred-row">
+                <span className="cred-label">Alma Mater / Gurukul:</span>
+                <strong>{currentPandit.gurukul || 'Sampurnanand Sanskrit University, Varanasi'}</strong>
+              </div>
+              <div className="cred-row">
+                <span className="cred-label">Vedic Disciplines:</span>
+                <strong>{currentPandit.vedicSpecialization || 'Navagraha Shanti, Rudrabhishek & Griha Pravesh'}</strong>
+              </div>
+              <div className="cred-row">
+                <span className="cred-label">Shastra Experience:</span>
+                <strong>{currentPandit.experienceYears || 18} Years Classical Practice</strong>
+              </div>
+              <div className="cred-row">
+                <span className="cred-label">Languages Known:</span>
+                <strong>Hindi, Sanskrit, Bhojpuri</strong>
               </div>
             </div>
           </section>
         )}
       </main>
 
-      <Footer />
+      <Footer onOpenAuth={() => setAuthModalOpen(true)} />
 
       <AuthModal
         isOpen={authModalOpen}
         initialRole="PANDIT"
+        redirectUrl="/dashboard/pandit"
         onClose={() => setAuthModalOpen(false)}
       />
     </div>

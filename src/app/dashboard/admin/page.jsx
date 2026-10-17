@@ -13,7 +13,7 @@ import { POOJA_SERVICES } from '@/data/poojas';
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('verification'); // 'verification', 'all_bookings', 'catalog'
   const [bookings, setBookings] = useState([]);
   const [pandits, setPandits] = useState([]);
@@ -22,8 +22,10 @@ export default function AdminDashboard() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    loadAdminData();
-  }, []);
+    if (user && user.role === 'ADMIN') {
+      loadAdminData();
+    }
+  }, [user]);
 
   const loadAdminData = async () => {
     setLoading(true);
@@ -48,6 +50,69 @@ export default function AdminDashboard() {
     alert(`✓ Pandit verification status updated to: ${verifyStatus ? 'VERIFIED' : 'PENDING'}`);
     loadAdminData();
   };
+
+  // 1. AUTH LOADING STATE
+  if (authLoading) {
+    return (
+      <div className="portal-page admin-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => {}} />
+        <main className="portal-main-container">
+          <div className="portal-loading-box">
+            <span className="portal-spinner">🏛️</span>
+            <p>Verifying Administrative Credentials...</p>
+          </div>
+        </main>
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+      </div>
+    );
+  }
+
+  // 2. UNAUTHENTICATED OR NON-ADMIN ACCESS GATE
+  if (!user || user.role !== 'ADMIN') {
+    return (
+      <div className="portal-page admin-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => {}} />
+
+        <main className="portal-main-container">
+          <div className="portal-lock-wrapper">
+            <div className="portal-auth-card">
+              <div className="auth-icon-circle">🏛️</div>
+              <h2>Mandir Samiti Admin Console</h2>
+              <p className="auth-card-subtitle">
+                {user
+                  ? `You are currently signed in as "${user.name}" (${user.role}). This console requires verified Administrator clearance.`
+                  : 'Please sign in with your administrative credentials to manage pan-India Vedic operations, verify pandit certifications, and govern Muhurat assignments.'}
+              </p>
+
+              <div className="auth-card-actions">
+                <button
+                  type="button"
+                  className="btn-portal-primary-auth"
+                  onClick={() => setAuthModalOpen(true)}
+                >
+                  <span>🔐</span> {user ? 'Switch to Admin Account' : 'Sign In as Administrator'}
+                </button>
+                <Link href="/" className="btn-portal-back-home">
+                  ← Return to Homepage
+                </Link>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+
+        <AuthModal
+          isOpen={authModalOpen}
+          initialRole="ADMIN"
+          redirectUrl="/dashboard/admin"
+          onClose={() => setAuthModalOpen(false)}
+        />
+      </div>
+    );
+  }
 
   const pendingPandits = pandits.filter(p => !p.isVerified);
   const verifiedPandits = pandits.filter(p => p.isVerified);
@@ -297,11 +362,12 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      <Footer />
+      <Footer onOpenAuth={() => setAuthModalOpen(true)} />
 
       <AuthModal
         isOpen={authModalOpen}
         initialRole="ADMIN"
+        redirectUrl="/dashboard/admin"
         onClose={() => setAuthModalOpen(false)}
       />
     </div>

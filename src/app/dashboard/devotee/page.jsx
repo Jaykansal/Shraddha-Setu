@@ -14,7 +14,7 @@ import { getPanchangForCity } from '@/data/panchangData';
 
 export default function DevoteeDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings', 'book_new', 'samagri_checklist', 'profile'
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,9 @@ export default function DevoteeDashboard() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
-    loadBookings();
+    if (user) {
+      loadBookings();
+    }
   }, [user]);
 
   const loadBookings = async () => {
@@ -41,6 +43,67 @@ export default function DevoteeDashboard() {
     alert(`📜 Devotional Sankalp Patrika & Muhurat Receipt\n\nBooking Code: ${booking.bookingCode}\nPooja: ${booking.poojaTitle}\nPackage: ${booking.withSamagri ? 'With 100% Pure Samagri Kit' : 'Pandit Only'}\nDate: ${booking.bookingDate}\nMuhurat: ${booking.timeSlot}\nDakshina: ₹${booking.totalAmount}\nStatus: ${booking.status}\n\nBlessings from ShraddhaSetu.`);
   };
 
+  // 1. AUTH LOADING STATE
+  if (authLoading) {
+    return (
+      <div className="portal-page devotee-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => setBookingModalOpen(true)} />
+        <main className="portal-main-container">
+          <div className="portal-loading-box">
+            <span className="portal-spinner">🙏</span>
+            <p>Loading Devotee Account...</p>
+          </div>
+        </main>
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+      </div>
+    );
+  }
+
+  // 2. UNAUTHENTICATED ACCESS GATE
+  if (!user) {
+    return (
+      <div className="portal-page devotee-portal-theme">
+        <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
+        <Navbar onOpenAuth={() => setAuthModalOpen(true)} onOpenBooking={() => setBookingModalOpen(true)} />
+
+        <main className="portal-main-container">
+          <div className="portal-lock-wrapper">
+            <div className="portal-auth-card">
+              <div className="auth-icon-circle">🙏</div>
+              <h2>Devotee / Yajman Portal</h2>
+              <p className="auth-card-subtitle">
+                Please sign in to track your booked Pujas, consult your assigned Vedic Pandit, access Muhurat receipts, and prepare your Sankalp details.
+              </p>
+
+              <div className="auth-card-actions">
+                <button
+                  type="button"
+                  className="btn-portal-primary-auth"
+                  onClick={() => setAuthModalOpen(true)}
+                >
+                  <span>🔐</span> Sign In to Yajman Portal
+                </button>
+                <Link href="/" className="btn-portal-back-home">
+                  ← Return to Homepage
+                </Link>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer onOpenAuth={() => setAuthModalOpen(true)} />
+
+        <AuthModal
+          isOpen={authModalOpen}
+          initialRole="CLIENT"
+          redirectUrl="/dashboard/devotee"
+          onClose={() => setAuthModalOpen(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="portal-page devotee-portal-theme">
       <TopBar onOpenAuth={() => setAuthModalOpen(true)} />
@@ -51,7 +114,7 @@ export default function DevoteeDashboard() {
         <section className="portal-banner-card devotee-banner">
           <div className="banner-left">
             <span className="role-tag-pill">🙏 Devotee / Yajman Portal</span>
-            <h2>Namaste, {user?.name || 'Rameshwar Ji'}!</h2>
+            <h2>Namaste, {user.name}!</h2>
             <p>Track your sacred rituals, consult your assigned Vedic Pandit, and prepare your Sankalp details.</p>
           </div>
           <div className="banner-right-actions">
@@ -424,7 +487,7 @@ export default function DevoteeDashboard() {
         )}
       </main>
 
-      <Footer />
+      <Footer onOpenAuth={() => setAuthModalOpen(true)} />
 
       <BookingModal
         isOpen={bookingModalOpen}
@@ -439,6 +502,7 @@ export default function DevoteeDashboard() {
       <AuthModal
         isOpen={authModalOpen}
         initialRole="CLIENT"
+        redirectUrl="/dashboard/devotee"
         onClose={() => setAuthModalOpen(false)}
       />
     </div>
