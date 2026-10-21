@@ -21,21 +21,35 @@ export default function DevoteeDashboard() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
+  const [lastSyncTime, setLastSyncTime] = useState('');
+
   useEffect(() => {
     if (user) {
-      loadBookings();
+      loadBookings(true);
+      const pollInterval = setInterval(() => {
+        loadBookings(false);
+      }, 4000);
+
+      const handleSync = () => loadBookings(false);
+      window.addEventListener('shraddhasetu_data_sync', handleSync);
+
+      return () => {
+        clearInterval(pollInterval);
+        window.removeEventListener('shraddhasetu_data_sync', handleSync);
+      };
     }
   }, [user]);
 
-  const loadBookings = async () => {
-    setLoading(true);
+  const loadBookings = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.getBookings(user?.id ? { clientId: user.id } : {});
       setBookings(res.data || []);
+      setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } catch (e) {
       console.warn('Could not load bookings:', e);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -83,7 +97,12 @@ export default function DevoteeDashboard() {
         {/* DEVOTEE WELCOME BANNER */}
         <section className="portal-banner-card devotee-banner">
           <div className="banner-left">
-            <span className="role-tag-pill">🙏 Devotee / Yajman Portal</span>
+            <div className="banner-tags-row">
+              <span className="role-tag-pill">🙏 Devotee / Yajman Portal</span>
+              <span className="live-sync-indicator-pill">
+                <span className="live-dot-pulse"></span> LIVE REAL-TIME FEED {lastSyncTime ? `• ${lastSyncTime}` : ''}
+              </span>
+            </div>
             <h2>Namaste, {user.name}!</h2>
             <p>Track your sacred rituals, consult your assigned Vedic Pandit, and prepare your Sankalp details.</p>
           </div>

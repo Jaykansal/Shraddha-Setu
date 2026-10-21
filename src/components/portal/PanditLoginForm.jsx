@@ -48,6 +48,18 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
     return () => clearInterval(interval);
   }, [resendTimer]);
 
+  useEffect(() => {
+    const handleAutofill = (e) => {
+      if (e && e.detail && e.detail.otp) {
+        setOtp(e.detail.otp);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('shraddhasetu_autofill_otp', handleAutofill);
+      return () => window.removeEventListener('shraddhasetu_autofill_otp', handleAutofill);
+    }
+  }, []);
+
   // 1. Send OTP Handler
   const handleSendOtp = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -60,6 +72,11 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
       setOtpSent(true);
       setResendTimer(30);
       setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} पर भेजा गया। (डेमो कोड: 108108)`);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('shraddhasetu_live_sms', {
+          detail: { phone, otp: res.demoOtp || '108108', role: 'PANDIT' }
+        }));
+      }
     } catch (err) {
       setErrorMsg(err.message || 'पंडित मोबाइल नंबर सत्यापन में त्रुटि। कृपया पंजीकृत मोबाइल नंबर दर्ज करें।');
     } finally {

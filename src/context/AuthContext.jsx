@@ -11,14 +11,32 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = getStoredUser();
-    const storedToken = getToken();
-    if (storedUser && storedToken) {
-      setUser(storedUser);
-      setTokenState(storedToken);
+    const syncAuthState = () => {
+      const storedUser = getStoredUser();
+      const storedToken = getToken();
+      setUser(storedUser || null);
+      setTokenState(storedToken || null);
+      setLoading(false);
+    };
+
+    syncAuthState();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', syncAuthState);
+      window.addEventListener('shraddhasetu_auth_sync', syncAuthState);
+      return () => {
+        window.removeEventListener('storage', syncAuthState);
+        window.removeEventListener('shraddhasetu_auth_sync', syncAuthState);
+      };
     }
-    setLoading(false);
   }, []);
+
+  const broadcastChange = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('shraddhasetu_auth_sync'));
+      window.dispatchEvent(new CustomEvent('shraddhasetu_data_sync'));
+    }
+  };
 
   const login = async (email, password, requestedRole = 'CLIENT') => {
     const res = await api.login({ email, password, requestedRole });
@@ -27,6 +45,7 @@ export function AuthProvider({ children }) {
       setTokenState(res.token);
       setStoredUser(res.user);
       setToken(res.token);
+      broadcastChange();
       return res;
     }
     throw new Error(res.message || 'Login failed');
@@ -39,6 +58,7 @@ export function AuthProvider({ children }) {
       setTokenState(res.token);
       setStoredUser(res.user);
       setToken(res.token);
+      broadcastChange();
       return res;
     }
     throw new Error(res.message || 'Registration failed');
@@ -55,6 +75,7 @@ export function AuthProvider({ children }) {
       setTokenState(res.token);
       setStoredUser(res.user);
       setToken(res.token);
+      broadcastChange();
       return res;
     }
     throw new Error(res.message || 'OTP verification failed');
@@ -65,6 +86,7 @@ export function AuthProvider({ children }) {
     setTokenState(null);
     setStoredUser(null);
     setToken(null);
+    broadcastChange();
   };
 
   const isDevotee = user?.role === 'CLIENT';

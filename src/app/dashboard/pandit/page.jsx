@@ -18,22 +18,35 @@ export default function PanditDashboard() {
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [lastSyncTime, setLastSyncTime] = useState('');
 
   useEffect(() => {
     if (user && user.role === 'PANDIT') {
-      loadPanditBookings();
+      loadPanditBookings(true);
+      const pollInterval = setInterval(() => {
+        loadPanditBookings(false);
+      }, 4000);
+
+      const handleSync = () => loadPanditBookings(false);
+      window.addEventListener('shraddhasetu_data_sync', handleSync);
+
+      return () => {
+        clearInterval(pollInterval);
+        window.removeEventListener('shraddhasetu_data_sync', handleSync);
+      };
     }
   }, [user]);
 
-  const loadPanditBookings = async () => {
-    setLoading(true);
+  const loadPanditBookings = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await api.getBookings();
       setBookings(res.data || []);
+      setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } catch (e) {
       console.warn('Could not load pandit bookings:', e);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -82,8 +95,11 @@ export default function PanditDashboard() {
   const handleAcceptPuja = async (bookingId) => {
     try {
       await api.updateBookingStatus(bookingId, 'ASSIGNED', currentPandit);
-      alert('✓ Hari Om! You have accepted and locked this auspicious Muhurat. The devotee has been notified.');
-      loadPanditBookings();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('shraddhasetu_data_sync'));
+      }
+      alert('✓ Hari Om! You have accepted and locked this auspicious Muhurat. The devotee has been notified in real time.');
+      loadPanditBookings(false);
     } catch (e) {
       alert('Could not accept puja: ' + e.message);
     }
@@ -92,8 +108,11 @@ export default function PanditDashboard() {
   const handleMarkCompleted = async (bookingId) => {
     try {
       await api.updateBookingStatus(bookingId, 'COMPLETED', currentPandit);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('shraddhasetu_data_sync'));
+      }
       alert('✓ Purnaahuti! Ritual marked as successfully completed. Dakshina credited to your ledger.');
-      loadPanditBookings();
+      loadPanditBookings(false);
     } catch (e) {
       alert('Could not update status: ' + e.message);
     }
@@ -110,6 +129,9 @@ export default function PanditDashboard() {
           <div className="banner-left">
             <div className="pandit-title-row">
               <span className="role-tag-pill pandit-pill">🕉️ Acharya Portal</span>
+              <span className="live-sync-indicator-pill">
+                <span className="live-dot-pulse"></span> LIVE OPERATIONS DESK {lastSyncTime ? `• ${lastSyncTime}` : ''}
+              </span>
               {currentPandit.isVerified ? (
                 <span className="badge-verified">✓ Gurukul Certified Scholar</span>
               ) : (

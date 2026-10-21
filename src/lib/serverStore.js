@@ -144,8 +144,6 @@ function getInitialData() {
 let inMemoryDb = null;
 
 function loadDb() {
-  if (inMemoryDb) return inMemoryDb;
-
   try {
     if (fs.existsSync(DB_PATH)) {
       const raw = fs.readFileSync(DB_PATH, 'utf-8');
@@ -153,11 +151,14 @@ function loadDb() {
       return inMemoryDb;
     }
   } catch (e) {
+    if (inMemoryDb) return inMemoryDb;
     console.warn('Could not read persistent DB file, initializing fresh store:', e);
   }
 
-  inMemoryDb = getInitialData();
-  saveDb(inMemoryDb);
+  if (!inMemoryDb) {
+    inMemoryDb = getInitialData();
+    saveDb(inMemoryDb);
+  }
   return inMemoryDb;
 }
 

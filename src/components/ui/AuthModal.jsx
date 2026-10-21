@@ -82,6 +82,18 @@ export default function AuthModal({
     }
   };
 
+  useEffect(() => {
+    const handleAutofill = (e) => {
+      if (e && e.detail && e.detail.otp) {
+        setOtpCode(e.detail.otp);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('shraddhasetu_autofill_otp', handleAutofill);
+      return () => window.removeEventListener('shraddhasetu_autofill_otp', handleAutofill);
+    }
+  }, []);
+
   const handleSendOtp = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
     setLoading(true);
@@ -93,6 +105,11 @@ export default function AuthModal({
       setOtpSent(true);
       setResendTimer(30);
       setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${otpPhone} पर भेजा गया। (डेमो कोड: 108108)`);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('shraddhasetu_live_sms', {
+          detail: { phone: otpPhone, otp: res.demoOtp || '108108', role }
+        }));
+      }
     } catch (err) {
       setErrorMsg(err.message || 'OTP भेजने में त्रुटि हुई।');
     } finally {

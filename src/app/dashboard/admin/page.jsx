@@ -20,15 +20,27 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState('');
 
   useEffect(() => {
     if (user && user.role === 'ADMIN') {
-      loadAdminData();
+      loadAdminData(true);
+      const pollInterval = setInterval(() => {
+        loadAdminData(false);
+      }, 4000);
+
+      const handleSync = () => loadAdminData(false);
+      window.addEventListener('shraddhasetu_data_sync', handleSync);
+
+      return () => {
+        clearInterval(pollInterval);
+        window.removeEventListener('shraddhasetu_data_sync', handleSync);
+      };
     }
   }, [user]);
 
-  const loadAdminData = async () => {
-    setLoading(true);
+  const loadAdminData = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const [bkgRes, panditRes, statsRes] = await Promise.all([
         api.getBookings(),
@@ -38,17 +50,21 @@ export default function AdminDashboard() {
       setBookings(bkgRes.data || []);
       setPandits(panditRes.data || []);
       setStats(statsRes.data || null);
+      setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } catch (e) {
       console.warn('Admin load error:', e);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
   const handleVerifyPandit = async (panditId, verifyStatus) => {
     await api.verifyPandit(panditId, verifyStatus);
     alert(`✓ Pandit verification status updated to: ${verifyStatus ? 'VERIFIED' : 'PENDING'}`);
-    loadAdminData();
+    loadAdminData(false);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('shraddhasetu_data_sync', { detail: { type: 'pandit_verified', panditId, verifyStatus } }));
+    }
   };
 
   // 1. AUTH LOADING STATE
@@ -94,12 +110,17 @@ export default function AdminDashboard() {
         {/* ADMIN HEADER BANNER */}
         <section className="portal-banner-card admin-banner">
           <div className="banner-left">
-            <span className="role-tag-pill admin-tag">🏛️ Mandir Samiti Admin Console</span>
+            <div className="banner-tags-row">
+              <span className="role-tag-pill admin-tag">🏛️ Mandir Samiti Admin Console</span>
+              <span className="live-sync-indicator-pill">
+                <span className="live-dot-pulse"></span> LIVE MANDIR DESK {lastSyncTime ? `• ${lastSyncTime}` : ''}
+              </span>
+            </div>
             <h2>{user?.name || 'ShraddhaSetu Central Administration'}</h2>
             <p>Pan-India Vedic operations desk: Gurukul credential verification, Muhurat assignment, and ceremony governance.</p>
           </div>
           <div className="banner-right-actions">
-            <button type="button" className="btn-portal-action" onClick={loadAdminData}>
+            <button type="button" className="btn-portal-action" onClick={() => loadAdminData(true)}>
               🔄 Sync Real-Time Data
             </button>
             <button

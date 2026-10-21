@@ -46,6 +46,18 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
     return () => clearInterval(interval);
   }, [resendTimer]);
 
+  useEffect(() => {
+    const handleAutofill = (e) => {
+      if (e && e.detail && e.detail.otp) {
+        setOtp(e.detail.otp);
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('shraddhasetu_autofill_otp', handleAutofill);
+      return () => window.removeEventListener('shraddhasetu_autofill_otp', handleAutofill);
+    }
+  }, []);
+
   // 1. Send OTP Handler
   const handleSendOtp = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -58,6 +70,11 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
       setOtpSent(true);
       setResendTimer(30);
       setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} पर भेजा गया। (डेमो कोड: 108108)`);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('shraddhasetu_live_sms', {
+          detail: { phone, otp: res.demoOtp || '108108', role: 'CLIENT' }
+        }));
+      }
     } catch (err) {
       setErrorMsg(err.message || 'OTP भेजने में त्रुटि हुई। कृपया 10 अंकों का मान्य मोबाइल नंबर दर्ज करें।');
     } finally {

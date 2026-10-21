@@ -3639,5 +3639,206 @@ a {
   width: 100%;
 }
 
+/* ========================================================
+   REAL-TIME LIVE INDICATORS & LIVE CLOCK
+   ======================================================== */
+.banner-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FEF3C7;
+  color: #92400E;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid #FDE68A;
+}
+
+.live-dot-pulse {
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: livePulseAnim 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes livePulseAnim {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.live-sync-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #065F46;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+
+/* ========================================================
+   LIVE SMS TOAST NOTIFICATION COMPONENT
+   ======================================================== */
+.live-sms-toast-container {
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  z-index: 99999;
+  max-width: 440px;
+  width: calc(100% - 40px);
+  animation: slideInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+@keyframes slideInDown {
+  0% {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.live-sms-card {
+  background: #1E293B;
+  color: #F8FAFC;
+  border-radius: 14px;
+  border: 1px solid #334155;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.4), 0 10px 15px -5px rgba(0, 0, 0, 0.2);
+  padding: 14px 16px;
+  backdrop-filter: blur(12px);
+}
+
+.sms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sms-sender-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sms-app-icon {
+  font-size: 16px;
+}
+
+.sms-app-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.sms-time-badge {
+  font-size: 11px;
+  color: #64748B;
+}
+
+.sms-close-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.sms-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.sms-body {
+  margin-bottom: 12px;
+}
+
+.sms-text {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #E2E8F0;
+  margin: 0;
+}
+
+.sms-text strong {
+  color: #FDE047;
+}
+
+.sms-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-sms-autofill {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-sms-autofill:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+.sms-live-badge {
+  font-size: 11px;
+  color: #34D399;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 
 

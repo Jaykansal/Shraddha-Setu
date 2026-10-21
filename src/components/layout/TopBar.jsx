@@ -1,15 +1,30 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 export default function TopBar() {
   const { user } = useAuth();
+  const [liveTime, setLiveTime] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setLiveTime(now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="top-bar">
       <div className="top-bar-left">
-        <span className="muhurat-badge">🚩 Today's Auspicious Muhurat</span>
+        <span className="muhurat-badge live-pulse-badge">
+          <span className="live-dot-pulse"></span>
+          LIVE VEDIC CLOCK: {liveTime || '11:42:08 AM'}
+        </span>
         <span className="muhurat-time">Abhijit Muhurat: 11:42 AM - 12:28 PM • Ravi Yoga Active</span>
       </div>
 

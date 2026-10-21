@@ -24,6 +24,8 @@ export const metadata = {
   },
 };
 
+import LiveSmsToast from '@/components/ui/LiveSmsToast';
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -40,6 +42,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
+          <LiveSmsToast />
           {children}
         </AuthProvider>
       </body>
