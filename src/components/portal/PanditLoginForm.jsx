@@ -291,6 +291,28 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
                 </button>
               </div>
 
+              <div className="otp-instant-callout">
+                <div className="otp-code-highlight">
+                  <div className="otp-code-meta">
+                    <span className="otp-badge-tag">🔒 LIVE OTP CODE</span>
+                    <strong className="otp-number-display">108108</strong>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-quick-fill-otp"
+                    onClick={() => setOtp('108108')}
+                  >
+                    ⚡ 1-Click Auto Fill
+                  </button>
+                </div>
+                <div className="otp-telecom-notice">
+                  <span>📱 Phone SIM SMS Notice:</span>
+                  <p>
+                    Physical phone SIM par real SMS aane ke liye telecom gateway (Fast2SMS / Twilio API Key) ki zaroorat hoti hai. Bina intezar kiye turant login ke liye upar diya gaya code <strong>108108</strong> enter karein ya <strong>Auto Fill</strong> dabayein!
+                  </p>
+                </div>
+              </div>
+
               <div className="portal-form-group">
                 <label>Enter 6-Digit Verification Code (ओटीपी कोड) *</label>
                 <input

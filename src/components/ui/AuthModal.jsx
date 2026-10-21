@@ -330,6 +330,28 @@ export default function AuthModal({
                   </button>
                 </div>
 
+                <div className="otp-instant-callout">
+                  <div className="otp-code-highlight">
+                    <div className="otp-code-meta">
+                      <span className="otp-badge-tag">🔒 LIVE OTP CODE</span>
+                      <strong className="otp-number-display">108108</strong>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-quick-fill-otp"
+                      onClick={() => setOtpCode('108108')}
+                    >
+                      ⚡ Auto Fill
+                    </button>
+                  </div>
+                  <div className="otp-telecom-notice">
+                    <span>📱 Physical SIM SMS:</span>
+                    <p>
+                      Phone SIM par SMS ke liye Fast2SMS/Twilio API Key chahiye. Turant login ke liye upar diya code <strong>108108</strong> dalein ya <strong>Auto Fill</strong> dabayein.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="form-group">
                   <label>Enter 6-Digit Code (ओटीपी कोड) *</label>
                   <input

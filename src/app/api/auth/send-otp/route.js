@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { serverStore, normalizePhone } from '@/lib/serverStore';
+import { dispatchRealSms } from '@/lib/smsService';
 
 export async function POST(request) {
   try {
@@ -50,11 +51,23 @@ export async function POST(request) {
     const generatedOtp = '108108';
     serverStore.storeOtp(cleanDigits, generatedOtp, role);
 
+    // Attempt real telecom SMS dispatch (Fast2SMS / 2Factor / Twilio)
+    const smsResult = await dispatchRealSms(cleanDigits, generatedOtp);
+
+    let responseMsg = `सत्यापन कोड (OTP) आपके मोबाइल नंबर +91 ${cleanDigits} के लिए जनरेट हो गया है।`;
+    if (smsResult.success) {
+      responseMsg = `सत्यापन कोड (OTP) आपके मोबाइल नंबर +91 ${cleanDigits} पर SMS द्वारा भेज दिया गया है (${smsResult.provider})।`;
+    } else {
+      responseMsg = `सत्यापन कोड (OTP): ${generatedOtp} जनरेट हो चुका है। कृपया यह 6-अंकों का कोड नीचे दर्ज करें।`;
+    }
+
     return NextResponse.json({
       success: true,
-      message: `सत्यापन कोड (OTP) आपके मोबाइल नंबर +91 ${cleanDigits} पर भेज दिया गया है। (डेमो कोड: ${generatedOtp})`,
+      message: responseMsg,
       phone: cleanDigits,
       demoOtp: generatedOtp,
+      realSmsSent: smsResult.success,
+      smsProvider: smsResult.provider || 'Simulator',
     });
   } catch (err) {
     return NextResponse.json(
