@@ -17,8 +17,19 @@ export async function dispatchRealSms(phoneNumber, otpCode) {
   const fast2SmsKey = process.env.FAST2SMS_API_KEY;
   if (fast2SmsKey) {
     try {
-      const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2SmsKey)}&variables_values=${encodeURIComponent(otpCode)}&route=otp&numbers=${cleanPhone}`;
-      const response = await fetch(url, { method: 'GET' });
+      const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+        method: 'POST',
+        headers: {
+          'authorization': fast2SmsKey.trim(),
+          'Content-Type': 'application/json',
+          'cache-control': 'no-cache',
+        },
+        body: JSON.stringify({
+          route: 'otp',
+          variables_values: String(otpCode),
+          numbers: cleanPhone,
+        }),
+      });
       const data = await response.json();
       console.log('[SMS Gateway] Fast2SMS dispatch response:', data);
       if (data && (data.return === true || data.status_code === 200)) {
