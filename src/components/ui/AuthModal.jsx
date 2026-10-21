@@ -27,6 +27,7 @@ export default function AuthModal({
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [receivedOtp, setReceivedOtp] = useState('108108');
 
   useEffect(() => {
     if (isOpen && initialRole) {
@@ -104,10 +105,12 @@ export default function AuthModal({
       const res = await sendOtp(otpPhone, role);
       setOtpSent(true);
       setResendTimer(30);
-      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${otpPhone} पर भेजा गया। (डेमो कोड: 108108)`);
+      const activeCode = res.demoOtp || res.otp || '108108';
+      setReceivedOtp(activeCode);
+      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${otpPhone} के लिए तैयार है।`);
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('shraddhasetu_live_sms', {
-          detail: { phone: otpPhone, otp: res.demoOtp || '108108', role }
+          detail: { phone: otpPhone, otp: activeCode, role }
         }));
       }
     } catch (err) {
@@ -126,7 +129,7 @@ export default function AuthModal({
     try {
       const res = await loginWithOtp({
         phone: otpPhone,
-        otp: otpCode || '108108',
+        otp: otpCode || receivedOtp,
         role,
         name: formData.name,
       });
@@ -334,12 +337,12 @@ export default function AuthModal({
                   <div className="otp-code-highlight">
                     <div className="otp-code-meta">
                       <span className="otp-badge-tag">🔒 LIVE OTP CODE</span>
-                      <strong className="otp-number-display">108108</strong>
+                      <strong className="otp-number-display">{receivedOtp}</strong>
                     </div>
                     <button
                       type="button"
                       className="btn-quick-fill-otp"
-                      onClick={() => setOtpCode('108108')}
+                      onClick={() => setOtpCode(receivedOtp)}
                     >
                       ⚡ Auto Fill
                     </button>
@@ -347,7 +350,7 @@ export default function AuthModal({
                   <div className="otp-telecom-notice">
                     <span>📱 Physical SIM SMS:</span>
                     <p>
-                      Phone SIM par SMS ke liye Fast2SMS/Twilio API Key chahiye. Turant login ke liye upar diya code <strong>108108</strong> dalein ya <strong>Auto Fill</strong> dabayein.
+                      Phone SIM par real SMS ke liye Fast2SMS/Twilio API Key Render me dalein. Turant login ke liye upar diya code <strong>{receivedOtp}</strong> dalein ya <strong>Auto Fill</strong> dabayein.
                     </p>
                   </div>
                 </div>

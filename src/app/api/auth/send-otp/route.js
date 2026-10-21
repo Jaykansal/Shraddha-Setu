@@ -47,8 +47,8 @@ export async function POST(request) {
       }
     }
 
-    // Generate 6-digit OTP code (Sacred 108108 for instant testability)
-    const generatedOtp = '108108';
+    // Generate real dynamic 6-digit OTP code (e.g. 742915)
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
     serverStore.storeOtp(cleanDigits, generatedOtp, role);
 
     // Attempt real telecom SMS dispatch (Fast2SMS / 2Factor / Twilio)

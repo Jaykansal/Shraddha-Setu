@@ -20,6 +20,7 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [receivedOtp, setReceivedOtp] = useState('108108');
 
   // Password Login state
   const [loginEmail, setLoginEmail] = useState('pandit@shraddhasetu.com');
@@ -71,10 +72,12 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
       const res = await sendOtp(phone, 'PANDIT');
       setOtpSent(true);
       setResendTimer(30);
-      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} पर भेजा गया। (डेमो कोड: 108108)`);
+      const activeCode = res.demoOtp || res.otp || '108108';
+      setReceivedOtp(activeCode);
+      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} के लिए तैयार है।`);
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('shraddhasetu_live_sms', {
-          detail: { phone, otp: res.demoOtp || '108108', role: 'PANDIT' }
+          detail: { phone, otp: activeCode, role: 'PANDIT' }
         }));
       }
     } catch (err) {
@@ -94,7 +97,7 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
     try {
       const res = await loginWithOtp({
         phone,
-        otp: otp || '108108',
+        otp: otp || receivedOtp,
         role: 'PANDIT',
       });
       setSuccessMsg(res.message || 'प्रणाम आचार्य जी! पंडित पोर्टल में आपका स्वागत है।');
@@ -295,12 +298,12 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
                 <div className="otp-code-highlight">
                   <div className="otp-code-meta">
                     <span className="otp-badge-tag">🔒 LIVE OTP CODE</span>
-                    <strong className="otp-number-display">108108</strong>
+                    <strong className="otp-number-display">{receivedOtp}</strong>
                   </div>
                   <button
                     type="button"
                     className="btn-quick-fill-otp"
-                    onClick={() => setOtp('108108')}
+                    onClick={() => setOtp(receivedOtp)}
                   >
                     ⚡ 1-Click Auto Fill
                   </button>
@@ -308,7 +311,7 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
                 <div className="otp-telecom-notice">
                   <span>📱 Phone SIM SMS Notice:</span>
                   <p>
-                    Physical phone SIM par real SMS aane ke liye telecom gateway (Fast2SMS / Twilio API Key) ki zaroorat hoti hai. Bina intezar kiye turant login ke liye upar diya gaya code <strong>108108</strong> enter karein ya <strong>Auto Fill</strong> dabayein!
+                    Physical phone SIM par real SMS aane ke liye telecom gateway (Fast2SMS / Twilio API Key) Render me add karein. Turant login ke liye upar diya gaya code <strong>{receivedOtp}</strong> enter karein ya <strong>Auto Fill</strong> dabayein!
                   </p>
                 </div>
               </div>
