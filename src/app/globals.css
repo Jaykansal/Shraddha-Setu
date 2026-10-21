@@ -3484,4 +3484,160 @@ a {
   border-color: #EA580C;
 }
 
+/* ========================================================
+   OTP AUTHENTICATION STYLES (MOBILE & VERIFICATION)
+   ======================================================== */
+.auth-sub-method-switcher {
+  display: flex;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.modal-sub-switcher {
+  margin-top: -6px;
+  margin-bottom: 16px;
+}
+
+.sub-method-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sub-method-btn.active-sub-method {
+  background: #FFFFFF;
+  color: var(--maroon-primary);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.phone-input-addon {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #CBD5E1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.country-code-pill {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #F1F5F9;
+  border-right: 1px solid #CBD5E1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  user-select: none;
+}
+
+.phone-input-addon input {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  padding: 11px 14px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+.field-hint code {
+  background: #F1F5F9;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--maroon-primary);
+  font-weight: 600;
+}
+
+.otp-sent-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: #1E40AF;
+  margin-bottom: 16px;
+}
+
+.btn-change-phone {
+  background: transparent;
+  border: none;
+  color: #2563EB;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.otp-digits-input {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  letter-spacing: 8px !important;
+  text-align: center;
+  color: var(--maroon-primary) !important;
+  padding: 12px 16px !important;
+}
+
+.otp-helper-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.demo-code-pill {
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.resend-countdown {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.btn-resend-link {
+  background: transparent;
+  border: none;
+  color: var(--maroon-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.modal-otp-form-wrap {
+  width: 100%;
+}
+
+
 

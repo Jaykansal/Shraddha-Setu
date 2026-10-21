@@ -128,6 +128,25 @@ export const api = {
     throw lastError || new Error('Registration failed. Please check your information and try again.');
   },
 
+  async sendOtp({ phone, role = 'CLIENT' }) {
+    return await safeFetch('/api/auth/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone, role }),
+    });
+  },
+
+  async verifyOtp({ phone, otp, role = 'CLIENT', name = '', city = 'Varanasi' }) {
+    const data = await safeFetch('/api/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ phone, otp, role, name, city }),
+    });
+    if (data && data.success) {
+      if (data.token) setToken(data.token);
+      if (data.user) setStoredUser(data.user);
+    }
+    return data;
+  },
+
   // --- REAL BOOKINGS ---
   async getBookings(params = {}) {
     const qs = new URLSearchParams(params).toString();

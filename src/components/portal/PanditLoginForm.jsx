@@ -1,20 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
   const router = useRouter();
-  const { login, register } = useAuth();
+  const { login, register, sendOtp, loginWithOtp } = useAuth();
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [loginMethod, setLoginMethod] = useState('otp'); // 'otp' | 'password'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Login form state
+  // OTP Login state
+  const [phone, setPhone] = useState('9823456789');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  // Password Login state
   const [loginEmail, setLoginEmail] = useState('pandit@shraddhasetu.com');
   const [loginPassword, setLoginPassword] = useState('password123');
 
@@ -30,7 +37,62 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
     experience: 10,
   });
 
-  const handlePanditLogin = async (e, customEmail = null, customPass = null) => {
+  // Countdown timer for OTP resend
+  useEffect(() => {
+    let interval = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  // 1. Send OTP Handler
+  const handleSendOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+
+    try {
+      const res = await sendOtp(phone, 'PANDIT');
+      setOtpSent(true);
+      setResendTimer(30);
+      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} पर भेजा गया। (डेमो कोड: 108108)`);
+    } catch (err) {
+      setErrorMsg(err.message || 'पंडित मोबाइल नंबर सत्यापन में त्रुटि। कृपया पंजीकृत मोबाइल नंबर दर्ज करें।');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Verify OTP & Login Handler
+  const handleVerifyOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+
+    try {
+      const res = await loginWithOtp({
+        phone,
+        otp: otp || '108108',
+        role: 'PANDIT',
+      });
+      setSuccessMsg(res.message || 'प्रणाम आचार्य जी! पंडित पोर्टल में आपका स्वागत है।');
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 500);
+    } catch (err) {
+      setErrorMsg(err.message || 'अमान्य OTP कोड। कृपया 108108 दर्ज करें।');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 3. Password Login Handler
+  const handlePanditPasswordLogin = async (e, customEmail = null, customPass = null) => {
     if (e && e.preventDefault) e.preventDefault();
     setLoading(true);
     setErrorMsg('');
@@ -52,12 +114,14 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
     }
   };
 
+  // 4. Quick 1-Click Access
   const handleQuickPanditLogin = () => {
-    setLoginEmail('pandit@shraddhasetu.com');
-    setLoginPassword('password123');
-    handlePanditLogin(null, 'pandit@shraddhasetu.com', 'password123');
+    setPhone('9823456789');
+    setOtp('108108');
+    handleVerifyOtp(null);
   };
 
+  // 5. Register Handler
   const handlePanditRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -103,8 +167,8 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
       {mode === 'login' && (
         <div className="quick-access-box pandit-quick-box">
           <div className="quick-info">
-            <strong>⚡ Quick Acharya Access</strong>
-            <span>One-click test access as Acharya Vidyadhar Shastri</span>
+            <strong>⚡ Quick Acharya Access (1-Click OTP Login)</strong>
+            <span>One-click test access as Acharya Vidyadhar Shastri (+91 98234 56789)</span>
           </div>
           <button
             type="button"
@@ -117,7 +181,7 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
         </div>
       )}
 
-      {/* TAB SWITCHER */}
+      {/* TAB SWITCHER: SIGN IN VS REGISTER */}
       <div className="portal-mode-toggle">
         <button
           type="button"
@@ -135,6 +199,26 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
         </button>
       </div>
 
+      {/* LOGIN METHOD SWITCHER: MOBILE OTP VS PASSWORD */}
+      {mode === 'login' && (
+        <div className="auth-sub-method-switcher">
+          <button
+            type="button"
+            className={`sub-method-btn ${loginMethod === 'otp' ? 'active-sub-method' : ''}`}
+            onClick={() => { setLoginMethod('otp'); setErrorMsg(''); }}
+          >
+            <span>📱</span> Mobile OTP Login (ओटीपी लॉगिन)
+          </button>
+          <button
+            type="button"
+            className={`sub-method-btn ${loginMethod === 'password' ? 'active-sub-method' : ''}`}
+            onClick={() => { setLoginMethod('password'); setErrorMsg(''); }}
+          >
+            <span>🔑</span> Email &amp; Password
+          </button>
+        </div>
+      )}
+
       {errorMsg && (
         <div className="portal-alert portal-alert-error">
           <span>⚠️</span> {errorMsg}
@@ -147,8 +231,88 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
         </div>
       )}
 
-      {mode === 'login' ? (
-        <form onSubmit={(e) => handlePanditLogin(e)} className="dedicated-portal-form">
+      {/* --- FORM SECTION --- */}
+      {mode === 'login' && loginMethod === 'otp' && (
+        <div className="otp-login-container">
+          {!otpSent ? (
+            /* STEP 1: ENTER PHONE NUMBER */
+            <form onSubmit={handleSendOtp} className="dedicated-portal-form">
+              <div className="portal-form-group">
+                <label>Registered Pandit Mobile Number (पंजीकृत मोबाइल नंबर) *</label>
+                <div className="phone-input-addon">
+                  <span className="country-code-pill">🇮🇳 +91</span>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    placeholder="9823456789"
+                    autoFocus
+                  />
+                </div>
+                <small className="field-hint">
+                  Demo Acharya Phone: <code>9823456789</code> (Acharya Vidyadhar Shastri)
+                </small>
+              </div>
+
+              <button type="submit" className="btn-portal-submit pandit-submit-btn" disabled={loading}>
+                {loading ? 'Sending OTP...' : '📲 Get OTP on Mobile (ओटीपी प्राप्त करें)'}
+              </button>
+            </form>
+          ) : (
+            /* STEP 2: ENTER OTP CODE */
+            <form onSubmit={handleVerifyOtp} className="dedicated-portal-form">
+              <div className="otp-sent-banner">
+                <span>OTP sent to: <strong>+91 {phone}</strong></span>
+                <button
+                  type="button"
+                  className="btn-change-phone"
+                  onClick={() => { setOtpSent(false); setOtp(''); }}
+                >
+                  Edit / बदलें
+                </button>
+              </div>
+
+              <div className="portal-form-group">
+                <label>Enter 6-Digit Verification Code (ओटीपी कोड) *</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="108108"
+                  className="otp-digits-input"
+                  autoFocus
+                />
+                <div className="otp-helper-row">
+                  <span className="demo-code-pill">Demo OTP: <strong>108108</strong></span>
+                  {resendTimer > 0 ? (
+                    <span className="resend-countdown">Resend in {resendTimer}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn-resend-link"
+                      onClick={handleSendOtp}
+                      disabled={loading}
+                    >
+                      Resend OTP (पुनः भेजें)
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <button type="submit" className="btn-portal-submit pandit-submit-btn" disabled={loading}>
+                {loading ? 'Verifying...' : '✅ Verify & Open Acharya Desk (सत्यापित करें)'}
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+
+      {mode === 'login' && loginMethod === 'password' && (
+        <form onSubmit={(e) => handlePanditPasswordLogin(e)} className="dedicated-portal-form">
           <div className="portal-form-group">
             <label>Registered Email / Phone (पंडित ईमेल या फ़ोन)</label>
             <input
@@ -172,10 +336,12 @@ export default function PanditLoginForm({ redirectUrl = '/dashboard/pandit' }) {
           </div>
 
           <button type="submit" className="btn-portal-submit pandit-submit-btn" disabled={loading}>
-            {loading ? 'Verifying Acharya Credentials...' : '🕉️ Sign In to Acharya Desk'}
+            {loading ? 'Verifying Acharya Credentials...' : '🕉️ Sign In with Password'}
           </button>
         </form>
-      ) : (
+      )}
+
+      {mode === 'register' && (
         <form onSubmit={handlePanditRegister} className="dedicated-portal-form">
           <div className="portal-form-row">
             <div className="portal-form-group">

@@ -1,20 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' }) {
   const router = useRouter();
-  const { login, register } = useAuth();
+  const { login, register, sendOtp, loginWithOtp } = useAuth();
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [loginMethod, setLoginMethod] = useState('otp'); // 'otp' | 'password'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Login form state
+  // OTP Login state
+  const [phone, setPhone] = useState('9876543210');
+  const [otp, setOtp] = useState('');
+  const [devoteeName, setDevoteeName] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  // Password Login state
   const [loginEmail, setLoginEmail] = useState('devotee@shraddhasetu.com');
   const [loginPassword, setLoginPassword] = useState('password123');
 
@@ -27,7 +35,63 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
     city: 'Varanasi',
   });
 
-  const handleDevoteeLogin = async (e, customEmail = null, customPass = null) => {
+  // Countdown timer for OTP resend
+  useEffect(() => {
+    let interval = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  // 1. Send OTP Handler
+  const handleSendOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+
+    try {
+      const res = await sendOtp(phone, 'CLIENT');
+      setOtpSent(true);
+      setResendTimer(30);
+      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${phone} पर भेजा गया। (डेमो कोड: 108108)`);
+    } catch (err) {
+      setErrorMsg(err.message || 'OTP भेजने में त्रुटि हुई। कृपया 10 अंकों का मान्य मोबाइल नंबर दर्ज करें।');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Verify OTP & Login Handler
+  const handleVerifyOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+
+    try {
+      const res = await loginWithOtp({
+        phone,
+        otp: otp || '108108',
+        role: 'CLIENT',
+        name: devoteeName,
+      });
+      setSuccessMsg(res.message || 'नमस्ते! यजमान पोर्टल में आपका स्वागत है।');
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 500);
+    } catch (err) {
+      setErrorMsg(err.message || 'अमान्य OTP कोड। कृपया 108108 दर्ज करें।');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 3. Password Login Handler
+  const handleDevoteePasswordLogin = async (e, customEmail = null, customPass = null) => {
     if (e && e.preventDefault) e.preventDefault();
     setLoading(true);
     setErrorMsg('');
@@ -49,12 +113,14 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
     }
   };
 
+  // 4. Quick 1-Click Access
   const handleQuickDevoteeLogin = () => {
-    setLoginEmail('devotee@shraddhasetu.com');
-    setLoginPassword('password123');
-    handleDevoteeLogin(null, 'devotee@shraddhasetu.com', 'password123');
+    setPhone('9876543210');
+    setOtp('108108');
+    handleVerifyOtp(null);
   };
 
+  // 5. Register Handler
   const handleDevoteeRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -100,8 +166,8 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
       {mode === 'login' && (
         <div className="quick-access-box devotee-quick-box">
           <div className="quick-info">
-            <strong>⚡ Quick Devotee Access</strong>
-            <span>One-click test access as Rameshwar Devotee</span>
+            <strong>⚡ Quick Devotee Access (1-Click OTP Login)</strong>
+            <span>Direct instant access as Rameshwar Devotee (+91 98765 43210)</span>
           </div>
           <button
             type="button"
@@ -109,12 +175,12 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
             onClick={handleQuickDevoteeLogin}
             disabled={loading}
           >
-            {loading ? 'Signing In...' : 'Sign In as Rameshwar Devotee (1-Click)'}
+            {loading ? 'Authenticating...' : 'Sign In as Rameshwar Devotee (1-Click)'}
           </button>
         </div>
       )}
 
-      {/* TAB SWITCHER */}
+      {/* MODE TOGGLE: SIGN IN VS CREATE ACCOUNT */}
       <div className="portal-mode-toggle">
         <button
           type="button"
@@ -132,6 +198,26 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
         </button>
       </div>
 
+      {/* LOGIN METHOD SWITCHER: MOBILE OTP VS PASSWORD */}
+      {mode === 'login' && (
+        <div className="auth-sub-method-switcher">
+          <button
+            type="button"
+            className={`sub-method-btn ${loginMethod === 'otp' ? 'active-sub-method' : ''}`}
+            onClick={() => { setLoginMethod('otp'); setErrorMsg(''); }}
+          >
+            <span>📱</span> Mobile OTP Login (ओटीपी लॉगिन)
+          </button>
+          <button
+            type="button"
+            className={`sub-method-btn ${loginMethod === 'password' ? 'active-sub-method' : ''}`}
+            onClick={() => { setLoginMethod('password'); setErrorMsg(''); }}
+          >
+            <span>🔑</span> Email &amp; Password
+          </button>
+        </div>
+      )}
+
       {errorMsg && (
         <div className="portal-alert portal-alert-error">
           <span>⚠️</span> {errorMsg}
@@ -144,8 +230,98 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
         </div>
       )}
 
-      {mode === 'login' ? (
-        <form onSubmit={(e) => handleDevoteeLogin(e)} className="dedicated-portal-form">
+      {/* --- FORM SECTION --- */}
+      {mode === 'login' && loginMethod === 'otp' && (
+        <div className="otp-login-container">
+          {!otpSent ? (
+            /* STEP 1: ENTER PHONE NUMBER */
+            <form onSubmit={handleSendOtp} className="dedicated-portal-form">
+              <div className="portal-form-group">
+                <label>10-Digit Mobile Number (मोबाइल नंबर) *</label>
+                <div className="phone-input-addon">
+                  <span className="country-code-pill">🇮🇳 +91</span>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    placeholder="9876543210"
+                    autoFocus
+                  />
+                </div>
+                <small className="field-hint">
+                  A 6-digit Vedic verification code (OTP) will be sent. Demo number: <code>9876543210</code>
+                </small>
+              </div>
+
+              <button type="submit" className="btn-portal-submit devotee-submit-btn" disabled={loading}>
+                {loading ? 'Sending OTP...' : '📲 Get OTP on Mobile (ओटीपी प्राप्त करें)'}
+              </button>
+            </form>
+          ) : (
+            /* STEP 2: ENTER OTP CODE */
+            <form onSubmit={handleVerifyOtp} className="dedicated-portal-form">
+              <div className="otp-sent-banner">
+                <span>OTP sent to: <strong>+91 {phone}</strong></span>
+                <button
+                  type="button"
+                  className="btn-change-phone"
+                  onClick={() => { setOtpSent(false); setOtp(''); }}
+                >
+                  Edit / बदलें
+                </button>
+              </div>
+
+              <div className="portal-form-group">
+                <label>Enter 6-Digit Verification Code (ओटीपी कोड) *</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="108108"
+                  className="otp-digits-input"
+                  autoFocus
+                />
+                <div className="otp-helper-row">
+                  <span className="demo-code-pill">Demo OTP: <strong>108108</strong></span>
+                  {resendTimer > 0 ? (
+                    <span className="resend-countdown">Resend in {resendTimer}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn-resend-link"
+                      onClick={handleSendOtp}
+                      disabled={loading}
+                    >
+                      Resend OTP (पुनः भेजें)
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="portal-form-group">
+                <label>Your Name (वैकल्पिक / Optional for new users)</label>
+                <input
+                  type="text"
+                  value={devoteeName}
+                  onChange={(e) => setDevoteeName(e.target.value)}
+                  placeholder="उदा: Rameshwar Sharma"
+                />
+              </div>
+
+              <button type="submit" className="btn-portal-submit devotee-submit-btn" disabled={loading}>
+                {loading ? 'Verifying...' : '✅ Verify & Enter Yajman Portal (सत्यापित करें)'}
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+
+      {mode === 'login' && loginMethod === 'password' && (
+        <form onSubmit={(e) => handleDevoteePasswordLogin(e)} className="dedicated-portal-form">
           <div className="portal-form-group">
             <label>Registered Email or Phone (ईमेल या फ़ोन नंबर)</label>
             <input
@@ -169,10 +345,12 @@ export default function DevoteeLoginForm({ redirectUrl = '/dashboard/devotee' })
           </div>
 
           <button type="submit" className="btn-portal-submit devotee-submit-btn" disabled={loading}>
-            {loading ? 'Signing In...' : '🙏 Sign In to Yajman Portal'}
+            {loading ? 'Signing In...' : '🙏 Sign In with Password'}
           </button>
         </form>
-      ) : (
+      )}
+
+      {mode === 'register' && (
         <form onSubmit={handleDevoteeRegister} className="dedicated-portal-form">
           <div className="portal-form-group">
             <label>Full Name (पूरा नाम) *</label>

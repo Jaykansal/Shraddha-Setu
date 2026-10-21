@@ -13,21 +13,47 @@ export default function AuthModal({
   onSuccess
 }) {
   const router = useRouter();
-  const { login, register } = useAuth();
+  const { login, register, sendOtp, loginWithOtp } = useAuth();
 
   const [role, setRole] = useState(initialRole); // 'CLIENT', 'PANDIT', 'ADMIN'
   const [isRegister, setIsRegister] = useState(false);
+  const [loginMethod, setLoginMethod] = useState('otp'); // 'otp' | 'password'
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  // OTP State
+  const [otpPhone, setOtpPhone] = useState('9876543210');
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   useEffect(() => {
     if (isOpen && initialRole) {
       setRole(initialRole);
       setErrorMsg('');
       setSuccessMsg('');
+      setOtpSent(false);
+      setOtpCode('');
+      if (initialRole === 'ADMIN') {
+        setLoginMethod('password');
+      } else if (initialRole === 'PANDIT') {
+        setOtpPhone('9823456789');
+      } else {
+        setOtpPhone('9876543210');
+      }
     }
   }, [initialRole, isOpen]);
+
+  useEffect(() => {
+    let interval = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -53,6 +79,50 @@ export default function AuthModal({
       router.push('/dashboard/admin');
     } else {
       router.push('/dashboard/devotee');
+    }
+  };
+
+  const handleSendOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const res = await sendOtp(otpPhone, role);
+      setOtpSent(true);
+      setResendTimer(30);
+      setSuccessMsg(res.message || `सत्यापन कोड (OTP) +91 ${otpPhone} पर भेजा गया। (डेमो कोड: 108108)`);
+    } catch (err) {
+      setErrorMsg(err.message || 'OTP भेजने में त्रुटि हुई।');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const res = await loginWithOtp({
+        phone: otpPhone,
+        otp: otpCode || '108108',
+        role,
+        name: formData.name,
+      });
+      setSuccessMsg(res.message || 'सत्यापन सफल रहा!');
+      setTimeout(() => {
+        onClose();
+        if (onSuccess) onSuccess(res.user);
+        handleRedirect(role);
+      }, 500);
+    } catch (err) {
+      setErrorMsg(err.message || 'अमान्य OTP कोड। कृपया 108108 दर्ज करें।');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,21 +180,36 @@ export default function AuthModal({
           <button
             type="button"
             className={`auth-role-tab ${role === 'CLIENT' ? 'active-client' : ''}`}
-            onClick={() => { setRole('CLIENT'); setErrorMsg(''); }}
+            onClick={() => {
+              setRole('CLIENT');
+              setErrorMsg('');
+              setOtpPhone('9876543210');
+              setOtpSent(false);
+            }}
           >
             <span>🙏</span> Devotee / Yajman
           </button>
           <button
             type="button"
             className={`auth-role-tab ${role === 'PANDIT' ? 'active-pandit' : ''}`}
-            onClick={() => { setRole('PANDIT'); setErrorMsg(''); }}
+            onClick={() => {
+              setRole('PANDIT');
+              setErrorMsg('');
+              setOtpPhone('9823456789');
+              setOtpSent(false);
+            }}
           >
             <span>🕉️</span> Pandit Ji / Acharya
           </button>
           <button
             type="button"
             className={`auth-role-tab ${role === 'ADMIN' ? 'active-admin' : ''}`}
-            onClick={() => { setRole('ADMIN'); setErrorMsg(''); setIsRegister(false); }}
+            onClick={() => {
+              setRole('ADMIN');
+              setErrorMsg('');
+              setIsRegister(false);
+              setLoginMethod('password');
+            }}
           >
             <span>🏛️</span> Mandir Admin
           </button>
@@ -164,59 +249,156 @@ export default function AuthModal({
           </div>
         )}
 
+        {/* SUB-METHOD: OTP VS PASSWORD (WHEN IN SIGN-IN FOR CLIENT/PANDIT) */}
+        {!isRegister && role !== 'ADMIN' && (
+          <div className="auth-sub-method-switcher modal-sub-switcher">
+            <button
+              type="button"
+              className={`sub-method-btn ${loginMethod === 'otp' ? 'active-sub-method' : ''}`}
+              onClick={() => { setLoginMethod('otp'); setErrorMsg(''); }}
+            >
+              <span>📱</span> Mobile OTP
+            </button>
+            <button
+              type="button"
+              className={`sub-method-btn ${loginMethod === 'password' ? 'active-sub-method' : ''}`}
+              onClick={() => { setLoginMethod('password'); setErrorMsg(''); }}
+            >
+              <span>🔑</span> Password
+            </button>
+          </div>
+        )}
+
         {errorMsg && <div className="auth-alert error-alert">{errorMsg}</div>}
         {successMsg && <div className="auth-alert success-alert">{successMsg}</div>}
 
-        {/* REAL AUTHENTICATION FORM */}
-        <form onSubmit={handleSubmit} className="auth-form">
-          {isRegister && (
+        {/* OTP SIGN IN FORM */}
+        {!isRegister && role !== 'ADMIN' && loginMethod === 'otp' ? (
+          <div className="modal-otp-form-wrap">
+            {!otpSent ? (
+              <form onSubmit={handleSendOtp} className="auth-form">
+                <div className="form-group">
+                  <label>10-Digit Mobile Number (मोबाइल नंबर) *</label>
+                  <div className="phone-input-addon">
+                    <span className="country-code-pill">🇮🇳 +91</span>
+                    <input
+                      type="tel"
+                      required
+                      maxLength={10}
+                      value={otpPhone}
+                      onChange={(e) => setOtpPhone(e.target.value.replace(/\D/g, ''))}
+                      placeholder={role === 'PANDIT' ? '9823456789' : '9876543210'}
+                      autoFocus
+                    />
+                  </div>
+                  <small className="field-hint">
+                    Demo {role === 'PANDIT' ? 'Acharya' : 'Devotee'} Phone: <code>{role === 'PANDIT' ? '9823456789' : '9876543210'}</code> (OTP: <code>108108</code>)
+                  </small>
+                </div>
+
+                <button type="submit" className="btn-auth-submit" disabled={loading}>
+                  {loading ? 'Sending OTP...' : '📲 Get OTP on Mobile (ओटीपी प्राप्त करें)'}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="auth-form">
+                <div className="otp-sent-banner">
+                  <span>OTP sent to: <strong>+91 {otpPhone}</strong></span>
+                  <button
+                    type="button"
+                    className="btn-change-phone"
+                    onClick={() => { setOtpSent(false); setOtpCode(''); }}
+                  >
+                    Edit / बदलें
+                  </button>
+                </div>
+
+                <div className="form-group">
+                  <label>Enter 6-Digit Code (ओटीपी कोड) *</label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="108108"
+                    className="otp-digits-input"
+                    autoFocus
+                  />
+                  <div className="otp-helper-row">
+                    <span className="demo-code-pill">Demo OTP: <strong>108108</strong></span>
+                    {resendTimer > 0 ? (
+                      <span className="resend-countdown">Resend in {resendTimer}s</span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn-resend-link"
+                        onClick={handleSendOtp}
+                        disabled={loading}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <button type="submit" className="btn-auth-submit" disabled={loading}>
+                  {loading ? 'Verifying...' : '✅ Verify & Sign In (सत्यापित करें)'}
+                </button>
+              </form>
+            )}
+          </div>
+        ) : (
+          /* STANDARD FORM */
+          <form onSubmit={handleSubmit} className="auth-form">
+            {isRegister && (
+              <div className="form-group">
+                <label>Full Name (पूरा नाम) *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder={role === 'PANDIT' ? 'Acharya Vidyadhar Shastri' : 'Rameshwar Devotee'}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+            )}
+
             <div className="form-group">
-              <label>Full Name (पूरा नाम) *</label>
+              <label>Email Address (ईमेल) *</label>
               <input
-                type="text"
+                type="email"
                 required
-                placeholder={role === 'PANDIT' ? 'Acharya Vidyadhar Shastri' : 'Rameshwar Devotee'}
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={role === 'PANDIT' ? 'pandit@shraddhasetu.com' : (role === 'ADMIN' ? 'admin@shraddhasetu.com' : 'devotee@shraddhasetu.com')}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
-          )}
 
-          <div className="form-group">
-            <label>Email Address (ईमेल) *</label>
-            <input
-              type="email"
-              required
-              placeholder={role === 'PANDIT' ? 'pandit@shraddhasetu.com' : (role === 'ADMIN' ? 'admin@shraddhasetu.com' : 'devotee@shraddhasetu.com')}
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </div>
+            {isRegister && (
+              <div className="form-group">
+                <label>Mobile Number (मोबाइल / WhatsApp नंबर) *</label>
+                <input
+                  type="tel"
+                  required
+                  placeholder="+91 98765 43210"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+            )}
 
-          {isRegister && (
             <div className="form-group">
-              <label>Mobile Number (मोबाइल / WhatsApp नंबर) *</label>
+              <label>Password (पासवर्ड) *</label>
               <input
-                type="tel"
+                type="password"
                 required
-                placeholder="+91 98765 43210"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="••••••••"
+                minLength={6}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
             </div>
-          )}
-
-          <div className="form-group">
-            <label>Password (पासवर्ड) *</label>
-            <input
-              type="password"
-              required
-              placeholder="••••••••"
-              minLength={6}
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-          </div>
 
           {isRegister && (
             <>
@@ -275,6 +457,7 @@ export default function AuthModal({
             {loading ? 'Verifying Credentials...' : (isRegister ? 'Complete Registration' : 'Sign In to Portal')}
           </button>
         </form>
+      )}
 
         {/* DEFAULT ACCOUNTS HINT FOR VERIFICATION */}
         <div className="auth-account-hint">

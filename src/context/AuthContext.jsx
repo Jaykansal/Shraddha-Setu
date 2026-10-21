@@ -44,6 +44,22 @@ export function AuthProvider({ children }) {
     throw new Error(res.message || 'Registration failed');
   };
 
+  const sendOtp = async (phone, role = 'CLIENT') => {
+    return await api.sendOtp({ phone, role });
+  };
+
+  const loginWithOtp = async ({ phone, otp, role = 'CLIENT', name = '', city = 'Varanasi' }) => {
+    const res = await api.verifyOtp({ phone, otp, role, name, city });
+    if (res.success && res.user) {
+      setUser(res.user);
+      setTokenState(res.token);
+      setStoredUser(res.user);
+      setToken(res.token);
+      return res;
+    }
+    throw new Error(res.message || 'OTP verification failed');
+  };
+
   const logout = () => {
     setUser(null);
     setTokenState(null);
@@ -62,6 +78,8 @@ export function AuthProvider({ children }) {
       loading,
       login,
       register,
+      sendOtp,
+      loginWithOtp,
       logout,
       isDevotee,
       isPandit,
